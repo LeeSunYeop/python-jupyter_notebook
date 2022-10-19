@@ -1,0 +1,662 @@
+# map(): iterable 가능한 자료형을 받아서 그 안에 있는 요솟값 하나하나에 대해서 
+# 넘겨준 function에 대입하고 그 결과를 list로 반환
+
+def plus(a_list) :           # map 구성이 이렇게 생겼다
+    result_list = []
+    for a in a_list :
+        result_list.append(a + 100)
+    return result_list
+
+result = plus([1, 2, 3, 4])
+result
+출력
+[101, 102, 103, 104]
+
+def plus2(x) :
+    return x + 100
+
+list(map(plus2, [1, 2, 3, 4]))
+출력
+[101, 102, 103, 104]
+
+# 람다식으로 하면..
+list(map(lambda x : x + 100, [1, 2, 3, 4]))
+출력
+[101, 102, 103, 104]
+
+# iterable(반복 가능한 데이터)한 데이터의 각 요솟값에 대해서 특정 함수를 적용하고
+# 싶다면, map()함수를 이용하세요
+
+###################
+# 개발 스크립트 -> 파일 : output(출력)
+# 파일 -> 개발 스크립트 : input(입력)
+# stream을 통해서 데이터를 저장 및 읽어 오는거다
+# open()함수: 파일과 작업페이지를 연결시키는 스트림(그림상으로 화살표)을 생성함
+# close()함수: 파일과 작업 페이지의 연결을 끊어주는 역할, 스트림(그림상으로 화살표) 제거
+
+# wa는 output 작업
+f = open("show.txt", "w")   # rwa: r읽기모드, w쓰기모드(덮어쓰기 모드), a추가모드
+
+# w모드에서는 파일이 없으면, 파일을 자동으로 생성함(파이썬 워크스페이스에 생성됨)
+# w: 덮어쓰기 모드
+# a: 추가모드
+
+f.write("hello")
+f.write("\n")
+f.write("안녕")   # show파일에 입력이 됨
+
+f.close()
+
+f = open("show.txt", "a")  # append모드: 추가모드
+
+f.write("\n")
+f.write("guten tag")
+
+f.close()
+
+# show.txt 파일에 쓰기모드로 접속을 해서 거기에
+# hi
+# 안녕하세요.
+# 위 두 문장을 입력해주세요
+
+f = open("show.txt", "w")    
+
+f.write("hi")
+f.write("\n")
+f.write("안녕하세요")
+
+f.close()
+
+# w: 덮어쓰기 모드
+# a: 추가모드
+
+# with 구문 학습: open()함수를 호출하면, 반드시 close()함수를 호출해야 하는데
+# 이걸 구조적으로 보장해주는 기능
+
+with open("show.txt", "a") as f :
+    f.write("\n")
+    f.write("홍길동")      # 위에 a 모드랑 같은 기능을 한다
+
+# input 작업, r모드
+f = open("show.txt", "r")
+
+data = f.read()
+print(data)
+print(type(data))
+
+f.close()
+출력
+hi
+안녕하세요
+
+홍길동
+
+# In27의 코드를 with문으로 바꾸세요
+with open("show.txt", "r") as f :
+    
+    data = f.read()
+    print(data)
+    print(type(data))
+출력
+hi
+안녕하세요
+
+홍길동
+<class 'str'>
+
+with open("show.txt", "r") as f :
+    data = f.readlines()          # 전체를 읽어옴
+    print(data)                   # 출력하면 list가 나옴
+    print(type(data))
+출력
+['hi\n', '안녕하세요\n', '\n', '홍길동']
+<class 'list'>
+
+# readlines()를 이용할 경우, 개행문자(\n)도 같이 포함됨
+# 이것을 제거하고 싶다면, 문자열의 함수 중 strip()함수를 사용하면 됨
+
+str1 = "       h i         "  # 양쪽 공백만 제거되고 사이에 있는 공백은 남아 있음
+str1.strip()
+출력
+'h i'
+
+# data애 들어있는 개행문자를 map()함수를 이용해서 제거해 주세요
+# 람다식을 이용하세요
+with open("show.txt", "r") as f :
+    data = f.readlines()          
+    print(data)
+    
+    data = list(map(lambda x: x.strip(), data))
+    print(data)
+    
+    print(type(data))
+ 출력
+['hi\n', '안녕하세요\n', '\n', '홍길동']
+['hi', '안녕하세요', '', '홍길동']
+<class 'list'>
+
+# 한 줄씩 읽어오는 readline()함수
+f = open("show.txt", "r")
+data = f.readline()
+print(data)
+
+f.close()
+출력
+hi
+
+# 한 줄씩 읽어오는 readline()함수: 전체 읽어 오기
+f = open("show.txt", "r")
+
+while True :
+    data = f.readline()
+        
+    if not data :   # data가 없을 때 빠져나와라
+        break
+        
+    print(data)
+    
+f.close()
+출력
+hi
+
+안녕하세요
+
+홍길동
+
+# ln42의 내용을 with구문으로 구현하세요
+with open("show.txt", "r") as f :
+    
+    while True :
+        data = f.readline()
+        
+        if not data :   
+            break
+        
+        print(data)
+출력
+hi
+
+안녕하세요
+
+홍길동
+
+# 가능하다면, 반복문 안에 조건문을 사용하지 마세요
+# 속도를 더 빠르게 할 수 있다
+
+with open("show.txt", "r") as f :   # 속도가 더 빨라진다
+    data = f.readline()  # 파이썬: 조건식에 문자열만 넣어도 True/False가 나옴
+                            # 다른언어: 비교연산자, 논리연산자를 사용해야 True/False가 나옴
+    while data :
+        print(data)
+        
+        data = f.readline()
+출력
+hi
+
+안녕하세요
+
+홍길동
+
+# 위에서는 한쪽으로만 했었는데...
+# 개발 스크립트 <-> 파일 동시에 가능하다
+
+def readFile(filename) :
+    with open(filename, "r") as f :
+        data = f.readline();
+        print(data)
+        return data
+
+def writeFile(filename, str) :
+    with open(filename, "w") as f :
+        f.write(str)
+
+def appendFile(filename, str) :
+    with open(filename, "a") as f :
+        f.write(str)
+
+appendFile("show.txt", "다른 경로에 있는 것은 어떻게 합니까?")
+
+writeFile("../show2.txt", "다른 경로에 있는 것은 어떻게 합니까?")  
+# ../ 바로 위로 있는 부모폴더를 나타냄(상위폴더)
+# ./ 은 현재 폴더를 의미함
+
+#############
+명령프롬프트(cmd) 창을 열어주세요
+
+경로(path)
+- 폴더 = 디렉토리
+- 파일...
+
+현재 우리의 경로
+C:\Users\admin>
+
+cd(change directory)
+. : 현재의 경로를 의미함, 현재의 디렉토리, path환경설정을 하면, 현재 디렉토리에 없어도 path에 등록된 프로그램은 실행이 됨.
+   그래서 그런 프로그램의 자원와 현재 디렉토리의...
+.. : 현재 경로의 부모 경로를 의미함(한 단계 상위 경로), 한 단계 위에 있는 상위 디렉토리.. 부모디렉토리,부모폴더
+
+cd .
+C:\Users\admin>
+cd ..
+C:\Users>
+cd .. 
+C:\>
+
+C:\>cd Users 입력하면
+C:\Users> 이렇게 나옴
+
+################
+<클래스와 객체에 대한 학습>
+
+# 클래스: 객체를 만들기 위한 설계도
+# 객체: 현실 세계의 명사를 컴퓨터 프로그램에서 사용할 수 있도록 메모리에 로드한 데이터
+
+result = 0
+
+def add(num):
+    global result
+    result = result + num
+    return result
+add(4)
+출력
+4
+
+add(5)   # 4 + 5
+출력
+9
+
+result2 = 0
+def add2(num) :
+    global result2
+    result2 = result2 + num
+    return result2
+
+add(1000)
+add2(1000)
+출력
+1000
+
+print(result, result2)
+출력
+2009 1000
+
+add(10000)
+add2(10000)
+print(result, result2)
+출력
+12009 11000
+
+
+result3 = 0                      # 클래스를 사용하지 않으면 계속 반복이 된다.
+def add3(num) : 
+    global result3
+    result3 = result3 + num
+    return result3
+
+# class를 만들어서 활용하면 편함.
+
+class Calculator :
+    # 생성자: def가 붙어 있다고 해서 함수라고 하면 안됨
+    # __init__(): 생성자라고 함. 클래스를 이용해서 객체를 만들 때 사용
+    # 클래스명을 이용해서 호출함.
+    def __init__(self):
+        self.result = 0  # result 라는 객체를 하나 가지고 있다라는 의미
+        self.test = 0
+    
+    def add(self, num) :
+        self.result = self.result + num
+        return self.result
+    
+    # 클래스의 함수를 생성하려면, 반드시 self가 매개변수로 들어가야 한다
+    def resetResult(self) :
+        self.result = 0  # 초기화 시키기
+
+# calculator 클래스를 이용한 cal1 객체 생성
+cal1 = Calculator()
+
+result = cal1.add(4)
+print(result)
+print(cal1.test)
+출력
+4
+0
+
+# Calculator 클래스를 이용해서 cal2 객체를 생성
+cal2 = Calculator()
+
+# cal2를 이용해서 0+4+8의 결과를 출력하시오
+cal2.add(4)
+result = cal2.add(8)
+print(result)
+출력
+12
+
+cal1.result       cal2.result
+출력
+4                  12
+
+cal1.resetResult()
+print(cal1.result)         print(cal2.result)
+출력
+0                           12
+
+##########
+#  - 클래스 다이어그램 -
+# Calculator 클래스명
+# result , test : 멤버변수
+# 멤버변수: 객체의 구성요소
+# <<constructors>>
+# add(num), resetResult()
+# 함수(메서드): 객체의 능력(기능)
+
+# 클래스 다이어그램만 보고 만들어 보시오
+# Hero
+# attackPower
+# hp
+# <<constructors>>
+# attack(mon)
+# exit()
+# 현재 몬스터의 hp: 100...mon.getHp()
+# 공격: 몬스터의 hp는 몇 만큼 깎인다? attackPower만큼 깎임
+# 공격당한 후 몬스터의 hp는 몇이 되어야 하는가?
+# newHp = mon.getHp() - self.attackPower
+
+class Hero :
+    
+    def __init__(self) :
+        self.attackPower = 10
+        self.hp = 100
+    
+    def attack(self, mon) :
+        c_m_hp = mon.getHp()
+        newHp = c_m_hp - self.attackPower
+        mon.setHp(newHp)
+        mon.statusMon()
+        
+    
+    def exit(self) :
+        print("게임을 종료합니다")
+
+# 클래스 다이어그램만 보고 만들어 보시오
+# Mon
+
+# hp
+# <<constructors>>
+# setHp(newHp)
+# getHp() : hp -> return hp 임
+
+class Mon :
+    
+    def __init__(self) :
+        self.hp = 100
+    
+    def setHp(self, newHp) :
+        self.hp = newHp
+    
+    def getHp(self) :
+        return self.hp
+    
+    def statusMon(self) :
+        print("현재 hp: ", self.hp)
+
+superman = Hero()
+devil = Mon()
+superman.attack(devil)
+출력
+현재 hp:  90
+devil.getHp()
+출력
+90
+
+# Member클래스
+# - id, name, age 변수
+# - 생성자는 당연히 들어가 있어야 함
+# - 이들 변수에 대한 값을 수정/획득할 수 있는 메서드: getId(), setId()
+
+class Member :
+    
+    def __init__(self, mid, name, age) :  # mid, name, age 지역변수
+        self.mid = mid     # self.mid 멤버 변수
+        self.name = name
+        self.age = age
+    
+    def getMid(self) :
+        return self.mid
+    
+    def setMid(self, newMid) :
+        self.mid = newMid
+
+kim = Member('m001', "kimsucheol", 11)
+kim.getMid()
+출력
+'m001'
+
+kim.setMid("D001")
+kim.getMid()
+출력
+'D001'
+
+#####################
+<모듈 학습>
+
+# 모듈 만들기 : 기능을 묶어 놓은 파일, 함수, 클래스, 변수
+# import 모듈명(확장자 안 씀) as 별칭(짧게 쓰려고)
+# from 모듈명(확장자 안 씀_ import 함수명(모듈 안에 있는 함수))
+
+def test(a) :
+    print(a, "가 입력되었습니다.")
+
+def test2(a) :
+    return a*a
+
+하고나서 File -> 다운로드 as -> 파이썬 누르면 모듈이 만들어짐 -> 파일이름을 wemake 으로 적고 ->
+파이썬 워크스페이스에 잘라내서 붙여 넣는다
+
+# 모듈 불러오기 1
+# 모듈을 모두 불러 오고 싶다면 import 쓰면 됨
+import wemake as wm
+
+wm.test1(100)
+출력
+100 가 입력되었습니다.
+
+wm.test2(100)
+출력
+1000
+
+# 모듈 불러오기 2
+# 모듈의 특정 함수만 불러오고 싶다면 from 쓴다
+from wemake import *   # * 쓰면 모두 불러온다는 의미임
+                               # * 자리대신 test 나 test2 를 쓰게되면 쓴 입력값만 출력이 된다
+test(100)
+출력
+100 가 입력되었습니다.
+test2(100)
+출력
+10000
+
+#########
+wemake2.ipybook
+
+def test1(a) :
+    print(a)
+    
+def test2(a) :
+    return a*a
+
+if __name__== "__main__" :
+    print("ㅎㅎㅎㅎㅎ")
+    print("ㅋㅋㅋㅋㅋ")
+
+하고나서 File -> 다운로드 as -> 파이썬 누르면 모듈이 만들어짐 -> 파일이름을 wemake2 으로 적고 ->
+파이썬 워크스페이스에 잘라내서 붙여 넣는다
+
+모듈 불러오기3
+import wemake2 as wm
+wm.test1(100)
+출력
+100
+
+wemake2.test2(10)
+출력
+100
+
+############
+<numpy>
+배열과 연관이 있다
+
+import numpy as np
+a = list(range(10))
+a
+출력
+[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+b = [x for x in range(1, 10)]
+b
+출력
+[1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+arr1 = np.array(a)
+arr1
+출력
+array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+
+# b를 이용해서 numpy의 배열 객체 arr2를 생성해 주세요
+arr2 = np.array(b)
+arr2
+출력
+array([1, 2, 3, 4, 5, 6, 7, 8, 9])
+
+arr1.shape  # 크기를 나타내어준다, 튜플이고 1차원 배열임
+출력
+(10,)
+
+arr2.shape
+(9,)
+
+# shape 라는 속성은 np의 배열의 구조를 튜플로 반환해준다.
+# (10,) 1차원 배열
+# 1차원 배열: 최종 요솟값이 10개 있음
+# (10, 5) 2차원 배열
+# 2차원 배열: 
+# - 2차원 배열에는 1차원 배열이 몇개 있나? 10개의 1차원 배열이 들어 있음
+# - 1차원 배열에는 몇 개의 최종 요솟값이 들어 있을까? 5개
+# (10, 5, 11)
+# 3차원 배열
+# - 3차원 배열에는 2차원 배열이 몇개 있나? 10개의 2차원 배멸이 들어 있음
+# - 2차원 배열에는 1차원 배열이 몇개 있나? 5개의 1차원 배열이 들어 있음
+# - 1차원 배열에는 최종 요솟값이 몇개 들어 있는가? 11개
+# (10, 5, 11, 1) 
+# 4차원 배열
+# - 4차원 배열에는 3차원 배열이 몇 개 있나? 10개
+# - 3차원 배열에는 2차원 배열이 몇 개 있나? 5개
+# - 2차원 배열에는 1차원 배열이 몇 개 있나? 11개
+# - 1차원 배열에는 최종 요솟값이 몇 개 있나? 1개
+# (10, 5, 11, 1, 6)
+# 5차원 배열
+# - 5차원 배열에는 4차원 배열이 몇 개 있나? 10개
+# - 4차원 배열에는 3차원 배열이 몇 개 있나? 5개
+# - 3차원 배열에는 2차원 배열이 몇 개 있나? 11개
+# - 2차원 배열에는 1차원 배열이 몇 개 있나? 1개
+# - 1차원 배열에는 최종 요솟값이 몇 개 있나? 6개
+
+c = [
+    [1, 2, 3, 4],
+    [5, 6, 7, 8]
+]
+arr3 = np.array(c)
+arr3.shape
+출력
+(2, 4)
+
+d = [
+        [
+            [1, 1, 1]
+        ],
+    
+    
+        [
+            [2, 2, 2]
+        ],
+    
+    
+        [
+            [3, 3, 3]
+        ]
+    
+]
+
+arr4 = np.array(d)
+arr4.shape
+출력
+(3, 1, 3)
+
+arr1.dtype  # int 정수
+출력
+dtype('int32')
+
+arr2.dtype
+출력
+dtype('int32')
+
+arr3.dtype
+출력
+dtype('int32')
+
+arr4.dtype
+출력
+dtype('int32')
+
+arr5 = np.array([3.5, 9.8])  # float 소수
+arr5.dtype
+출력
+dtype('float64')
+
+arr6 = np.array([3.5, 9.8, 4, 1, 0])  # float 소수
+arr6.dtype
+출력
+dtype('float64')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
