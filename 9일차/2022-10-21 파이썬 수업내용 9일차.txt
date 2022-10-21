@@ -1,0 +1,1324 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+data1 = np.arange(1, 20)
+data2 = data1 * 3
+data3 = data1 ** 2
+data4 = data1 ** 2 + 100
+
+plt.plot(data1, data2, "gs:")
+plt.plot(data1, data3, "mo--")
+plt.plot(data1, data4, "rv-")
+
+plt.xlabel("x 축", fontdict={"family":"Malgun Gothic", "color":"b", "weight":"bold", "size":14}) 
+plt.ylabel("y 축", fontdict={"family":"Malgun Gothic", "color":"k", "weight":"bold", "size":20})
+#색상은 rgb 검색하면 다양하게 나온다
+
+plt.show()
+
+############
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+data1 = np.arange(1, 20)
+data2 = data1 * 3
+data3 = data1 ** 2
+data4 = data1 ** 2 + 100
+
+fonts = {
+    "x축" : {"family":"Malgun Gothic", "color":"b", "weight":"bold", "size":14},
+    "y축" : {"family":"Malgun Gothic", "color":"k", "weight":"bold", "size":20}
+}
+
+
+plt.plot(data1, data2, "gs:")
+plt.plot(data1, data3, "mo--")
+plt.plot(data1, data4, "rv--")
+
+plt.xlabel("x 축", fontdict=fonts["x축"]) 
+plt.ylabel("y 축", fontdict=fonts["y축"])
+
+plt.show()
+
+##########
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+data1 = np.arange(1, 20)
+data2 = data1 * 3
+data3 = data1 ** 2
+data4 = data1 ** 2 + 100
+
+fonts = {
+    "x축": {"family":"Malgun Gothic", "color":"b", "size":14},
+    "y축": {"family":"Malgun Gothic", "color":"k", "size":14}
+}
+
+plt.plot(data1, data2, "gs:")
+plt.plot(data1, data3, "mo--")
+plt.plot(data1, data4, "rd-")
+
+plt.xlabel("x축", fontdict=fonts["x축"], loc= "right")  # loc 라벨의 위치를 변경할 수 있다
+plt.ylabel("y축", fontdict=fonts["y축"], loc= "top")
+
+plt.show()
+
+##############
+import numpy as np
+import matplotlib.pyplot as plt
+
+data1 = np.arange(1, 20)
+data2 = data1 * 3 
+data3 = data1 ** 2
+data4 = data1 ** 2 + 100
+
+fonts = {
+    "x축": {"family":"Malgun Gothic", "color":"b", "size":14},
+    "y축": {"family":"Malgun Gothic", "color":"k", "size":14}
+}
+
+plt.plot(data1, data2, "gs:")
+plt.plot(data1, data3, "mo--")
+plt.plot(data1, data4, "rd-")
+
+plt.xlabel("x축", fontdict=fonts["x축"], labelpad=10, loc="right")  # labelpad 라벨과 숫자 간격을 나타냄
+plt.ylabel("y축", fontdict=fonts["y축"], labelpad=10, loc="top")
+
+plt.show()
+
+##########
+import numpy as np
+import matplotlib.pyplot as plt
+
+data1 = np.arange(1, 20)
+data2 = data1 * 3
+data3 = data1 ** 2
+data4 = data1 ** 2 + 100
+
+fonts = {
+    "x축": {"family":"Malgun Gothic", "color":"b", "size":14,},
+    "y축": {"family":"Malgun Gothic", "color":"k", "size":14}
+}
+
+plt.plot(data1, data2, "gs:", label="test1")     # label= 범례표시(속성값) 나옴
+plt.plot(data1, data3, "mo--", label="test2")
+plt.plot(data1, data4, "rd-", label="test3")
+
+plt.xlabel("x축", fontdict=fonts["x축"], labelpad=10, loc="right")
+plt.ylabel("y축", fontdict=fonts["y축"], labelpad=10, loc="top")
+
+plt.legend() # 범례 생성
+
+plt.show()
+############
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+data1 = np.arange(1, 20)
+data2 = data1 * 3
+data3 = data1 ** 2
+data4 = data1 ** 2 + 100
+
+fonts = {
+    "x축" : {"family":"Malgun Gothic", "color":"b", "size":14},
+    "y축" : {"family":"Malgun Gothic", "color":"k", "size":14}
+}
+
+plt.plot(data1, data2, "gs:", label="test1")
+plt.plot(data1, data3, "mo--", label="test2")
+plt.plot(data1, data4, "rh-", label="test3")
+
+plt.xlabel("x축", fontdict=fonts["x축"], loc="right", labelpad=10)
+plt.ylabel("y축", fontdict=fonts["y축"], loc="top", labelpad=10)
+
+plt.legend(loc="best") # 범례 위치, best를 넣으면 알아서 최적의 위치로 간다
+
+plt.show()
+
+############
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+data1 = np.arange(1, 20)
+data2 = data1 * 3
+data3 = data1 ** 2
+data4 = data1 ** 2 + 100
+
+fonts = {
+    "x축": {"family":"Malgun Gothic", "color":"b", "size":14},
+    "y축": {"family":"Malgun Gothic", "color":"k", "size":14}
+}
+
+plt.plot(data1, data2, "bs:", label="test1")
+plt.plot(data1, data3, "mo--", label="test2")
+plt.plot(data1, data4, "rv-", label="test3")
+
+plt.xlabel("x축", fontdict=fonts["x축"], loc="right", labelpad=10)
+plt.ylabel("y축", fontdict=fonts["y축"], loc="top", labelpad=10)
+
+plt.legend(loc="best", ncol=3, fontsize=12, frameon=True, shadow=True) 
+# ncol=2 범례가 2줄 나옴, ncol=3 한줄로 나옴
+# frameon=False 범례 테두리가 사라짐
+# frameon=True, shadow=True 범례 테두리에 그림자가 생김
+
+plt.show()
+##########
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+data1 = np.arange(1, 20)
+data2 = data1 * 3
+data3 = data1 ** 2
+data4 = data1 ** 2 + 100
+
+fonts = {
+    "x축": {"family":"Malgun Gothic", "color":"b", "size":14},
+    "y축": {"family":"Malgun Gothic", "color":"k", "size":14}
+}
+
+plt.plot(data1, data2, "bs:", label="test1")
+plt.plot(data1, data3, "mo--", label="test2")
+plt.plot(data1, data4, "rv-", label="test3")
+
+plt.xlabel("x축", fontdict=fonts["x축"], loc="right", labelpad=10)
+plt.ylabel("y축", fontdict=fonts["y축"], loc="top", labelpad=10)
+
+plt.legend(loc="best", ncol=3, fontsize=12, frameon=True, shadow=True) 
+
+plt.xlim([5, 15])   # lim(최소값, 최대값)
+plt.ylim([5, 300])
+
+plt.show()
+###########
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+data1 = np.arange(1, 20)
+data2 = data1 * 3
+data3 = data1 ** 2
+data4 = data1 ** 2 + 100
+
+fonts = {
+    "x축": {"family":"Malgun Gothic", "color":"b", "size":14},
+    "y축": {"family":"Malgun Gothic", "color":"k", "size":14}
+}
+
+plt.plot(data1, data2, "gs:", label="test1")
+plt.plot(data1, data3, "mo--", label="test2")
+plt.plot(data1, data4, "rv-", label="test3")
+
+plt.xlabel("x축", fontdict=fonts["x축"], loc="right", labelpad=10)
+plt.ylabel("y축", fontdict=fonts["y축"], loc="top", labelpad=10)
+
+plt.legend(loc="best", ncol=1, fontsize=14, frameon=True, shadow=True)
+
+plt.axis("on") 
+# lim 보다 axis를 많이 사용한다
+# axis([5, 15, 5, 300])
+# axis([x축최소값, x축최대값, y축최소값, y축최대값]) 넣어주면 된다
+# square, scaled, on, off, tight, auto 등등 있다
+
+plt.show()
+########
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+data1 = np.arange(1, 20)
+data2 = data1 * 3
+data3 = data1 ** 2
+data4 = data1 ** 2 + 100
+
+font = {
+    "x축": {"family":"Malgun Gothic", "color":"b", "size":14},
+    "y축": {"family":"Malgun Gothic", "color":"k", "size":14}
+}
+
+plt.plot(data1,data2, "gs:", label="test1")
+plt.plot(data1,data3, "mo--", label="test2")
+plt.plot(data1,data4, "rv-", label="test3")
+
+plt.xlabel("x축", fontdict=fonts["x축"], labelpad=10, loc="right")
+plt.ylabel("y축", fontdict=fonts["y축"], labelpad=10, loc="top")
+
+plt.legend(loc="best", ncol=1, fontsize=14, frameon=True, shadow=True)
+
+plt.axis("on")
+
+plt.fill_between(data1[6:10], data3[6:10], alpha=0.5, color="red")
+# 특정 범위 지정할 때
+# fill_between(x축데이터[최소값:최대값], y축데이터[최소값:최대값])  x축방향으로 채운다
+# [] 안에 들어가는 값은 같아야 한다 
+# fill_betweenx 는 y축 방향을 기준으로 채운다
+# alpha=0.5 반투명  0은 투명
+
+plt.fill_between(data1[9:15], data4[9:15], alpha=0.5, color="cyan")
+
+plt.show()
+############
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+data1 = np.arange(1, 20)
+data2 = data1 * 3
+data3 = data1 ** 2
+data4 = data1 ** 2 + 100
+
+fonts = {
+    "x축" : {"family":"Malgun Gothic", "color":"b", "size":14},
+    "y축" : {"family":"Malgun Gothic", "color":"k", "size":14}
+}
+
+plt.plot(data1, data2, "gs:", label="test1")
+plt.plot(data1, data3, "mo--", label="test2")
+plt.plot(data1, data4, "rv-", label="test3")
+
+plt.xlabel("x축", fontdict=fonts["x축"], labelpad=10, loc="right")
+plt.ylabel("y축", fontdict=fonts["y축"], labelpad=10, loc="top")
+
+plt.legend(loc="best", ncol=3, fontsize=14, frameon=True, shadow=True)
+
+plt.axis("auto")
+
+plt.fill_between(data1[6:10], data3[6:10], alpha=0.5, color="b")
+#plt.fill_between(data1[9:15], data4[9:15], alpha=0.5, color="k")
+
+plt.fill_betweenx(data4[9:15], data1[9:15], alpha=0.5)
+#fill_betweenx(y값 , x값)
+
+plt.show()
+###########
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+data1 = np.arange(1, 20)
+data2 = data1 * 3
+data3 = data1 ** 2
+data4 = data1 ** 2 + 100
+
+fonts = {
+    "x축": {"family":"Malgun Gothic", "color":"b", "size":14},
+    "y축": {"family":"Malgun Gothic", "color":"k", "size":14}
+}
+
+plt.plot(data1, data2, "gs:", label="test1")
+plt.plot(data1, data3, "mo--", label="test2")
+plt.plot(data1, data4, "rv-", label="test3")
+
+plt.xlabel("x축", fontdict=fonts["x축"], labelpad=10, loc="right")
+plt.ylabel("y축", fontdict=fonts["y축"], labelpad=10, loc="top")
+
+plt.legend(loc="best", ncol=3, fontsize=14, frameon=True, shadow=True)
+
+plt.axis("auto")
+
+plt.fill_between(data1[6:10], data3[6:10], alpha=0.5, color="b")
+plt.fill_betweenx(data4[9:15], data1[9:15], alpha=0.5, color="k")
+
+plt.fill_between(data1[12:18], data3[12:18], data4[12:18])
+# 그래프와 그래프 사이의 범위 지정할 때는 데이터 값이 3개 들어간다.
+# data3 과 data4 사이의 범위 지정할 때
+
+plt.fill_between(data1[10:13], data2[10:13], data3[10:13])
+
+plt.show()
+#########
+x = [1, 2, 3, 4, 5, 6, 7, 8]
+y1 = [10, 20, 30, 40, 50, 60, 70, 80]
+plt.plot(x, y1)
+plt.xlabel("x")
+plt.xlabel("y")
+plt.fill([2, 2, 3, 4, 4, 3], [10, 20, 50, 30, 20, 10])
+# 다각형의 그래프를 그리고 싶으면 fill() 사용하면 된다
+# fill([2, 2, 4, 4], [10, 20, 30, 20])
+# fill([x의 좌표, [y의 좌표])
+#  2, 2, 4, 4
+# 10,20,30,20   즉 (2,10), (2,20), (4,30), (4,20) 이렇게 짝을 이룬다
+plt.show()
+
+##################
+import numpy as np
+import matplotlib.pyplot as plt
+
+data1 = np.arange(1, 20)
+data2 = data1 * 3
+data3 = data1 ** 2
+data4 = data1 ** 2 + 100
+
+fonts = {
+    "x축": {"family":"Malgun Gothic", "color":"b", "size":14},
+    "y축": {"family":"Malgun Gothic", "color":"k", "size":14}
+}
+
+plt.plot(data1, data2, "gs:", label="test1")
+plt.plot(data1, data3, "mo--", label="test2")
+plt.plot(data1, data4, "rv-", label="test3")
+
+plt.xlabel("x축", fontdict=fonts["x축"], labelpad=10, loc="right")
+plt.ylabel("y축", fontdict=fonts["y축"], labelpad=10, loc="top")
+
+plt.legend(loc="best", ncol=3, fontsize=14, frameon=True, shadow=True)
+
+plt.axis("auto")
+
+plt.fill_between(data1[6:10], data3[6:10], alpha=0.5, color="b")
+plt.fill_betweenx(data4[9:15], data1[9:15], alpha=0.5, color="k")
+
+plt.fill_between(data1[12:18], data3[12:18], data4[12:18], alpha=0.5)
+plt.fill_between(data1[10:13], data2[10:13], data3[10:13], alpha=0.5)
+
+plt.grid(axis="y", color="r", linestyle="--", alpha=0.5)
+# grid() 그래프안에 격자(선)가 생김
+# grid(axis="both") x,y 양쪽다 나옴
+# grid(axis="y") y축에만 나타냄
+# linestyle="--" 선 모양이 나옴
+
+plt.show()
+##############
+matplotlib 연습3
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+data1 = np.arange(1, 8)
+data2 = data1 * 3
+data3 = data1 ** 2
+data4 = data1 ** 2 + 100
+
+fonts = {
+    "x축": {"family":"Malgun Gothic", "color":"b", "size":14},
+    "y축": {"family":"Malgun Gothic", "color":"k", "size":14},
+    "xtick": {"family":"Malgun Gothic", "color":"r", "size":12},
+    "ytick": {"family":"Malgun Gothic", "color":"g", "size":12}
+}
+
+plt.plot(data1, data2, "gs:", label="test1")
+plt.plot(data1, data3, "mo--", label="test2")
+plt.plot(data1, data4, "rv-", label="test3")
+
+plt.xlabel("x축", fontdict=fonts["x축"], labelpad=10, loc="right")
+plt.ylabel("y축", fontdict=fonts["y축"], labelpad=10, loc="top")
+
+plt.legend(loc="best", ncol=3, fontsize=14, frameon=True, shadow=True)
+
+plt.axis("tight")
+
+plt.fill_between(data1[3:10], data3[3:10], alpha=0.5, color="b")
+#plt.fill_between(data1[9:15], data4[9:15], alpha=0.5, color="r")
+plt.fill_betweenx(data4[10:16], data1[10:16], alpha=0.5, color="k")
+
+plt.fill_between(data1[10:18], data3[10:18], data4[10:18], alpha=0.5, color="r")
+
+plt.fill([1, 1, 10], [100, 300, 200], alpha=0.5)
+
+plt.grid(axis="y", color="r", linestyle="--", alpha=0.5)
+
+plt.xticks(data1, labels=["일", "월", "화", "수", "목", "금", "토"], fontdict= fonts["xtick"])
+# ticks: 틱(눈금)
+# xticks(data1) data1 값만큼 x축 눈금에 값이 표시됨 
+# labels=[""] 라벨 값을 변경한다.
+plt.yticks(np.arange(0, 500, 50)) 
+# label이 있어야만 fontdict=fonts["ytick"] 속성이 활성화 된다.
+
+plt.tick_params(axis="x", direction="in", length=10, width=2, color="r", pad=10)
+# direction="in" x축의 눈금이 안으로 표시 된다
+# length=10 눈금 길이
+# pad=10 눈금 간격
+plt.tick_params(axis="y", direction="inout", length=10, width=2, color="r", pad=6)
+# direction="inout" y축의 눈금이 안과밖으로 표시 된다
+
+plt.show()
+
+# 범주형 데이터: factor
+# 값이 정해져 있는것...
+# 이 중에서 골라서 사용하세요. 
+# 사이트 회원가입할때 직업 선택하는 거 등등
+##########
+
+matplotlib 연습4 
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+data1 = np.arange(1, 8)
+data2 = data1 * 3
+data3 = data1 ** 2
+data4 = data1 ** 2 + 100
+
+fonts = {
+    "x축": {"family":"Malgun Gothic", "color":"b", "size":14},
+    "y축": {"family":"Malgun Gothic", "color":"k", "size":14},
+    "xtick": {"family":"Malgun Gothic", "color":"r", "size":12},
+    "ytick": {"family":"Malgun Gothic", "color":"g", "size":12},
+    "title": {"family":"Malgun Gothic", "color":"k", "size":20}
+}
+
+plt.plot(data1, data2, "g:s", label="test1")
+plt.plot(data1, data3, "m--x", label="test2")
+plt.plot(data1, data4, "r-o", label="test3")
+
+plt.xlabel("x축", fontdict=fonts["x축"], labelpad=10, loc="right")
+plt.ylabel("y축", fontdict=fonts["y축"], labelpad=10, loc="top")
+
+plt.legend(loc="best", ncol=3, frameon=True, shadow=True)
+
+plt.axis("tight")
+
+plt.fill_between(data1[1:3], data3[1:3], alpha=0.5)
+#plt.fill_between(data1[3:6], data3[3:6], alpha=0.5)
+plt.fill_betweenx(data3[3:6], data1[3:6], alpha=0.5)
+plt.fill_between(data1[4:7], data3[4:7], data4[4:7], alpha=0.5)
+
+plt.fill([1, 1, 4], [20, 100, 60], alpha=0.5)
+
+plt.grid(axis="y", color="r", linestyle="--", alpha=.5)
+
+plt.xticks(data1, labels=["월", "화", "수", "목", "금", "토", "일"], fontdict=fonts["xtick"])
+plt.yticks(np.arange(0, 150, 30))
+
+plt.tick_params(axis="x", direction="in", length=10, width=2, color="r", pad=10)
+plt.tick_params(axis="y", direction="inout", length=10, width=2, color="r", pad=6)
+
+plt.title("요일별 확진자 수", fontdict=fonts["title"], loc="center")
+# plt.title() 제목 넣기 
+# fontdict=fonts["title"] 한글 깨지지 않게 폰트 추가하기
+# loc="center" 제목 왼쪽, 오른쪽 ,중앙 위치 변경할 수 있다
+
+plt.show()
+
+##############
+matplotlib 연습5(막대그래프)
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+x = np.arange(3)
+years = ['2020', '2021', '2022']
+vals = [100, 500, 300]
+
+plt.bar(x, vals)
+# plt.bar(x, vals) 막대그래프 그리기
+
+plt.xticks(x, labels=years)
+
+plt.show()
+
+#############
+import numpy as np
+import matplotlib.pyplot as plt
+
+x = np.arange(3)
+years = ['2020', '2021', '2022']
+vals = [100, 500, 300]
+
+plt.bar(x, vals, color="#86E57F")
+plt.xticks(x, labels=years)
+
+plt.show()
+
+###########
+import numpy as np
+import matplotlib.pyplot as plt
+
+x = np.arange(3)
+years = ['2020', '2021', '2022']
+vals = [100, 500, 300]
+colors = ['y', 'c', 'm']
+
+plt.bar(x, vals, color=colors)
+plt.xticks(x, labels=years)
+
+plt.show()
+
+##############
+matplotlib 연습5(막대그래프)
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+x = np.arange(3)
+years = ['2020', '2021', '2022']
+vals = [100, 500, 300]
+colors = ['y', 'c', 'm']
+
+fonts = {
+    "x": {"family":"Malgun Gothic", "color":"b", "size":14},
+    "y": {"family":"Malgun Gothic", "color":"k", "size":14},
+    "xtick": {"family":"Malgun Gothic", "color":"r", "size":12},
+    "ytick": {"family":"Malgun Gothic", "color":"g", "size":12},
+    "title": {"family":"Malgun Gothic", "color":"k", "size":15}
+}
+
+bar1 = plt.bar(x, vals, color=colors, width=.5, align="edge", edgecolor="k", linewidth=1.5)
+# align="edge" / "center" 눈금이 막대 왼쪽/가운데 에 있다 , 2가지 밖에 없다
+# edgecoclor="k" 엣지색깔
+# linewidth=3 가로길이 폭
+
+# plt.bar(x, vals, color=colors, width=0.5)
+# width=0.5 막대그래프의 폭을 변경할 수 있다 
+
+
+plt.xticks(x, labels=years, fontdict=fonts['ytick'])
+plt.yticks(np.arange(0, 600, 100))
+
+plt.xlabel("연도", fontdict=fonts['x'])
+plt.ylabel("연봉", fontdict=fonts['y'])
+
+plt.legend(handles=bar1, labels=years, loc="best", fontsize=14)
+
+plt.axis("tight")
+
+plt.grid(axis="y", color="r", linestyle="--", alpha=.5)
+
+plt.tick_params(axis="x", direction="in", length=5, width=1, color="r", pad=10)
+plt.tick_params(axis="y", direction="inout", length=5, width=1, color="r", pad=6)
+
+plt.title("연도별 연봉", fontdict=fonts["title"])
+
+plt.show()
+
+###############
+# 가로 막대 그래프
+import numpy as np
+import matplotlib.pyplot as plt
+
+x = np.arange(3)
+years = ['2020', '2021', '2022']
+vals = [100, 500, 300]
+colors = ['y', 'c', 'm']
+
+fonts = {
+    "x": {"family":"Malgun Gothic", "color":"b", "size":14},
+    "y": {"family":"Malgun Gothic", "color":"k", "size":14},
+    "xtick": {"family":"Malgun Gothic", "color":"r", "size":12},
+    "ytick": {"family":"Malgun Gothic", "color":"g", "size":12},
+    "title": {"family":"Malgun Gothic", "color":"k", "size":15}
+}
+
+bar1 = plt.barh(x, vals, color=colors, height=.5, align="edge", edgecolor="k", linewidth=1.5)
+
+
+plt.yticks(x, labels=years, fontdict=fonts['ytick'])
+plt.xticks(np.arange(0, 600, 100))
+
+plt.ylabel("연도", fontdict=fonts['x'])
+plt.xlabel("연봉", fontdict=fonts['y'])
+
+plt.legend(handles=bar1, labels=years, loc="best", fontsize=14)
+
+plt.axis("tight")
+
+plt.grid(axis="y", color="r", linestyle="--", alpha=.5)
+
+plt.tick_params(axis="y", direction="in", length=5, width=1, color="r", pad=10)
+plt.tick_params(axis="x", direction="inout", length=5, width=1, color="r", pad=6)
+
+plt.title("연도별 연봉", fontdict=fonts["title"])
+
+plt.show()
+
+# bar차트 -> barh차트
+# 1. plt.bar( ) -> plt.barh( )
+# 2. width -> height
+# 3. plt.xticks( ) ->plt.yticks( )
+# 4. plt.yticks( ) ->plt.xticks( )
+# 5. plt.xlabel( ) -> plt.ylabel( )
+# 6. plt.ylabel( ) -> plt.xlabel( )
+# 7. plt.tick_params(axis="y", -> plt.tick_params(axis="x", 
+# 8. plt.tick_params(axis="x", -> plt.tick_params(axis="y", 
+
+############
+# 산점도
+import numpy as np
+import matplotlib.pyplot as plt
+
+np.random.seed(100)
+print(np.random.rand(4))
+
+np.random.seed(100)
+print(np.random.rand(4))
+
+# 랜덤이지만 같은 결과값을 나오게 할 수 있다.
+# 시드의 값이 같다는 가정하에 같은 값이 나온다
+
+##########
+# 산점도
+import numpy as np
+import matplotlib.pyplot as plt
+
+np.random.seed(100)
+n = 20
+
+x = np.random.rand(n)  # 균등분포
+y = np.random.rand(n)
+area = (np.random.rand(n)*30)**2 # **제곱
+
+plt.scatter(x, y, s=area)
+# scatter 흩어지게 출력함
+
+plt.show()
+
+############
+import numpy as np
+import matplotlib.pyplot as plt
+
+np.random.seed(100)
+n = 20
+
+x = np.random.rand(n)  
+y = np.random.rand(n)
+area = (np.random.rand(n)*30)**2 
+colors = np.random.rand(n)
+
+import matplotlib.cm
+for key in matplotlib.cm.cmap_d.keys():
+    print(key)
+# cmap의 다양한 색상이 출력이 되야되는데 오류뜸
+# 그래서 밑에 쭉 나열해 놓음
+
+plt.scatter(x, y, s=area, c=colors, cmap="Blues_r")
+plt.colorbar()
+# plt.colorbar() 그래프 오른쪽에 막대 bar가 나타난다
+# cmap="Blues_r" 색상이 출력이 된다
+# ['Accent', 'Accent_r', 'Blues', 'Blues_r', 'BrBG', 'BrBG_r', 'BuGn', 
+# 'BuGn_r', 'BuPu', 'BuPu_r', 'CMRmap', 'CMRmap_r', 'Dark2', 'Dark2_r', 
+# 'GnBu', 'GnBu_r', 'Greens', 'Greens_r', 'Greys', 'Greys_r', 'OrRd', 
+# 'OrRd_r', 'Oranges', 'Oranges_r', 'PRGn', 'PRGn_r', 'Paired', 'Paired_r',
+# 'Pastel1', 'Pastel1_r', 'Pastel2', 'Pastel2_r', 'PiYG', 'PiYG_r', 'PuBu',
+# 'PuBuGn', 'PuBuGn_r', 'PuBu_r', 'PuOr', 'PuOr_r', 'PuRd', 'PuRd_r', 
+# 'Purples', 'Purples_r', 'RdBu', 'RdBu_r', 'RdGy', 'RdGy_r', 'RdPu', 
+# 'RdPu_r', 'RdYlBu', 'RdYlBu_r', 'RdYlGn', 'RdYlGn_r', 'Reds', 'Reds_r', 
+# 'Set1', 'Set1_r', 'Set2', 'Set2_r', 'Set3', 'Set3_r', 'Spectral', 
+# 'Spectral_r', 'Wistia', 'Wistia_r', 'YlGn', 'YlGnBu', 'YlGnBu_r', 
+# 'YlGn_r', 'YlOrBr', 'YlOrBr_r', 'YlOrRd', 'YlOrRd_r', 'afmhot', 
+# 'afmhot_r', 'autumn', 'autumn_r', 'binary', 'binary_r', 'bone', 'bone_r',
+# 'brg', 'brg_r', 'bwr', 'bwr_r', 'cividis', 'cividis_r', 'cool', 'cool_r', 
+# 'coolwarm', 'coolwarm_r', 'copper', 'copper_r', 'cubehelix', 'cubehelix_r', 
+# 'flag', 'flag_r', 'gist_earth', 'gist_earth_r', 'gist_gray', 'gist_gray_r', 
+# 'gist_heat', 'gist_heat_r', 'gist_ncar', 'gist_ncar_r', 'gist_rainbow', 
+# 'gist_rainbow_r', 'gist_stern', 'gist_stern_r', 'gist_yarg', 'gist_yarg_r',
+# 'gnuplot', 'gnuplot2', 'gnuplot2_r', 'gnuplot_r', 'gray', 'gray_r', 'hot', 
+# 'hot_r', 'hsv', 'hsv_r', 'inferno', 'inferno_r', 'jet', 'jet_r', 'magma', 
+# 'magma_r', 'nipy_spectral', 'nipy_spectral_r', 'ocean', 'ocean_r', 'pink', 
+# 'pink_r', 'plasma', 'plasma_r', 'prism', 'prism_r', 'rainbow', 'rainbow_r', 
+# 'seismic', 'seismic_r', 'spring', 'spring_r', 'summer', 'summer_r', 'tab10',
+# 'tab10_r', 'tab20', 'tab20_r', 'tab20b', 'tab20b_r', 'tab20c', 'tab20c_r', 
+# 'terrain', 'terrain_r', 'turbo', 'turbo_r', 'twilight', 'twilight_r', 'twilight_shifted',
+# 'twilight_shifted_r', 'viridis', 'viridis_r', 'winter', 'winter_r']
+plt.show()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
