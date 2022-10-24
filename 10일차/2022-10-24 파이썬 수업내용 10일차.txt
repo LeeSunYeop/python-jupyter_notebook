@@ -1,0 +1,922 @@
+아나콘다 재 설치 후에
+jupyter notebook의 실명 파일이 안 나타나면
+
+관지자 모드로 명령 프로프트(cmd) 실행 후에
+conda install jupyter notebook (엔터)
+입력
+
+python -m pip install -U pip
+python -m pip install -U matplotlib
+
+========cmd 창을 닫고
+다시 일반 cmd(비 관리자 모드)를 실행하고
+jupyter notebook 엔터
+
+==============================
+import matplotlib.cm
+for key in matplotlib.cm.cmap_d.keys():
+    print(key)   이렇게 해야되는데 안되서
+
+================================
+import matplotlib.cm
+for key in plt.colormaps( ) :
+   print(key)  이걸로 바꿈
+
+===========================================
+import numpy as np
+import matplotlib.pyplot as plt
+
+np.random.seed(0)
+n = 20
+
+x = np.random.rand(n)  
+y = np.random.rand(n)
+area = (np.random.rand(n)*30)**2 
+colors = np.random.rand(n)
+
+plt.scatter(x, y, s=area, c=colors, cmap="magma")
+plt.colorbar()
+
+plt.show()
+
+################matplotlib 연습6(히스토그램) 생성
+# 히스토그램
+# 빈도를 표현하는 그래프
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+plt.rc("font", family="Malgun Gothic")
+
+fonts = {
+    "x" : {"family":"Malgun Gothic", "color":"b", "size":14}
+}
+
+hometown = ["서울", "제주", "강원", "경상", " 충청", "전라", "경기", "경기", "경기", "서울"]
+
+plt.hist(hometown)
+
+plt.xlabel("지역", fontdict=fonts["x"])
+
+plt.show()
+
+#####################
+import matplotlib.pyplot as plt
+
+plt.rc("font", family="Malgun Gothic")
+
+score = [90, 95, 100, 88, 100, 70, 65, 74, 40, 90, 60, 70, 80, 83, 55, 59, 45]
+
+plt.hist(score, bins=5, label="5개씩");
+# bins 는 막대그래프가 5개 나온다
+plt.hist(score, bins=10, label="10개씩");
+
+plt.legend()
+
+# 출력값에 
+# (array([2., 0., 1., 2., 1., 3., 1., 1., 3., 3.]),
+#  array([ 40.,  46.,  52.,  58.,  64.,  70.,  76.,  82.,  88.,  94., 100.]),
+#  <BarContainer object of 10 artists>)
+# 나오면 plt.hist(score)에 ;을 넣으면 사라진다 => plt.hist(score);
+
+##########################
+import numpy as np
+import matplotlib
+import matplotlib.pyplot as plt
+
+plt.rcParams["axes.unicode_minus"]=False
+# plt.rcParams["axes.unicode_minus"]=False
+# -숫자 부분까지 나오게 하려면 이렇게 작성해야한다.
+
+data1 = np.random.randn(10000) + 1.0
+
+plt.hist(data1, bins=10, histtype="bar")
+plt.hist(data1, bins=10, histtype="step")
+plt.hist(data1, bins=20, histtype="stepfilled")
+# histtype="bar" 기본으로 나옴("bar" 써도 되고 생략해도됨)
+# histtype="step" 테두리에만 선이 나오게 함
+
+plt.show()
+
+#######################
+import numpy as np
+import matplotlib
+import matplotlib.pyplot as plt
+
+plt.rcParams["axes.unicode_minus"]=False
+
+data1 = np.random.randn(10000) + 1.0
+data2 = data1[:]
+
+plt.hist(data1, bins=10, histtype="bar")
+plt.hist(data1, bins=10, histtype="step")
+plt.hist(data2, bins=10, histtype="stepfilled")
+# "bar", "stepfilled" 출력하면 거의 같게 나온다(차이점을 모르겠음)
+
+plt.show()
+
+################
+# 퍼센트로 그래프 그리기
+import matplotlib.pyplot as plt
+
+perc = [10, 20, 50, 20]   # 합쳐서 100% 가 나와야 한다.
+labels = ["lg", "apple", "samsung", "sony"]
+
+plt.pie(perc, labels=labels, startangle=90, counterclock=False)
+# startangle=90 입력하기 전에는 3시 방향에서부터 시작했는데
+# 입력하고 나서 lg의 우측, 12시방향에서부터 시작한다.
+# counterclock=False 입력하고 나서 lg의 왼쪽부분을 기준으로 시작한다
+
+plt.show()
+
+#############
+import matplotlib.pyplot as plt
+
+perc = [10, 20, 50, 20]   
+labels = ["lg", "apple", "samsung", "sony"]
+
+plt.pie(perc, labels=labels, startangle=70, autopct="%.1f%%", explode=[0.50, 0.10, 0.02, 0.00], 
+        shadow=True, colors=["r", "g", "m", "y"])
+# autopct="%.2f" 소숫점 1자리까지 나타내어라
+# %를 나타내고 싶으면 %% 두개를 써줘야한다.
+# explode=[] 중심점으로 부터 얼마나 떨어져 있는지 간격을 나타낸다
+# lg는 반지름에서 50퍼 만큼 떨어지게한다.
+# shadow=True 그림자도 나타냄
+# colors 색 넣기
+plt.show()
+
+###########
+import matplotlib.pyplot as plt
+
+perc = [10, 20, 50, 20]   
+labels = ["lg", "apple", "samsung", "sony"]
+
+plt.pie(perc, labels=labels, startangle=70, autopct="%.1f%%", 
+        wedgeprops={"width":0.6, "linewidth":5, "edgecolor":"w"}, explode=[0.2,0,0,0])
+# wedgeprops={"width":0.5} 구멍의 크기를 나타냄
+# linewidth 간격의 폭을 나타냄
+plt.show()
+
+################
+sorted(plt.colormaps())
+# 색상이 뭐가 있는지 나열해줌
+
+# 히트맵(모자이크처럼) 나타내기
+import matplotlib.pyplot as plt
+import numpy as np
+
+arr = np.random.randn(20, 40)
+
+plt.matshow(arr, cmap="Oranges")
+# 모자이크처럼 나타냄
+plt.colorbar()
+plt.clim(-1, 1)
+# plt.clim(-1, 1) colorbar의 범위를 -1~1 까지 나타냄
+
+plt.show()
+
+#############
+# box 차트 그리기
+import matplotlib.pyplot as plt
+import numpy as np
+
+data1 = np.random.normal(0, 3.0, 1000)
+data2 = np.random.normal(0.0, 3.0, 800)
+data3 = np.random.normal(0.0, 3.0, 500)
+
+plt.boxplot([data1, data2, data3], notch=True)
+
+plt.show()
+
+################
+import matplotlib.pyplot as plt
+import numpy as np
+
+data1 = np.random.normal(0, 3.0, 1000)
+data2 = np.random.normal(0.0, 3.0, 800)
+data3 = np.random.normal(0.0, 3.0, 500)
+
+bp = plt.boxplot([data1, data2, data3], notch=True)
+
+print(bp.keys())
+
+whiskers = [item.get_ydata() for item in bp["whiskers"]]
+print(whiskers)
+# whiskers 수염이라는 뜻
+
+median = [item.get_ydata() for item in bp["medians"]]
+# medians 중간값을 표시해줌
+
+plt.show()
+
+####################
+import matplotlib.pyplot as plt
+import numpy as np
+
+data1 = np.random.normal(0, 3.0, 1000)
+data2 = np.random.normal(0.0, 3.0, 800)
+data3 = np.random.normal(0.0, 3.0, 500)
+
+bp = plt.boxplot([data1, data2, data3], notch=True, vert=False)
+# vert=False 그래프가 가로로 나타내어진다
+
+print(bp.keys())
+
+whiskers = [item.get_ydata() for item in bp["whiskers"]]
+print(whiskers)
+
+median = [item.get_ydata() for item in bp["medians"]]
+
+
+plt.show()
+
+###################
+matplotlib 연습7
+
+# 여러개의 그래프 그리기
+import numpy as np
+import matplotlib.pyplot as plt
+
+data = np.array([x for x in range(0, 100, 10)]) # x축 사용
+
+data1 = np.array([x**2 for x in range(0, 10)])  # y축 사용
+data2 = np.array([x*5 for x in range(0, 10)])
+data3 = np.array([x*3+4 for x in range(0, 10)])
+
+plt.subplot(3, 1, 1)
+# plt.subplot(3, 1, 1) 행이3 이고 열이 1인 1번 그래프
+plt.plot(data, data1, 'o-r')
+plt.title("First plot")
+plt.yticks(np.arange(0, 120, 20))
+plt.xticks(np.arange(0, 120, 20))
+plt.xlabel("x", loc="right")
+plt.ylabel("y")
+
+plt.subplot(3, 1, 2)    # 2번 그래프
+plt.plot(data, data2, 'm--')
+plt.title("Second plot")
+plt.yticks(np.arange(0, 70, 20))
+plt.xticks(np.arange(0, 120, 20))
+plt.xlabel("x", loc="right")
+plt.ylabel("y")
+
+plt.subplot(3, 1, 3)    # 3번 그래프
+plt.plot(data, data3, 'y-v')
+plt.title("Third plot")
+plt.yticks(np.arange(0, 70, 20))
+plt.xticks(np.arange(0, 120, 20))
+plt.xlabel("x", loc="right")
+plt.ylabel("y")
+
+plt.tight_layout()
+# x축이 잘 보이게 그래프와 그래프 사이를 떨어뜨려준다
+
+plt.show()
+
+##############
+import numpy as np
+import matplotlib.pyplot as plt
+
+data = np.array([x for x in range(0, 100, 10)]) # x축 사용
+
+data1 = np.array([x**2 for x in range(0, 10)])  # y축 사용
+data2 = np.array([x*5 for x in range(0, 10)])
+data3 = np.array([x*3+4 for x in range(0, 10)])
+
+plt.subplot(2, 2, 1)
+# plt.subplot(3, 1, 1) 행이2 이고 열이 2인 1번 그래프
+plt.plot(data, data1, 'o-r')
+plt.title("First plot")
+plt.yticks(np.arange(0, 120, 20))
+plt.xticks(np.arange(0, 120, 20))
+plt.xlabel("x", loc="right")
+plt.ylabel("y")
+
+plt.subplot(2, 2, 2)    # 2번 그래프
+plt.plot(data, data2, 'm--')
+plt.title("Second plot")
+plt.yticks(np.arange(0, 70, 20))
+plt.xticks(np.arange(0, 120, 20))
+plt.xlabel("x", loc="right")
+plt.ylabel("y")
+
+plt.subplot(2, 2, 3)    # 3번 그래프
+plt.plot(data, data3, 'y-v')
+plt.title("Third plot")
+plt.yticks(np.arange(0, 70, 20))
+plt.xticks(np.arange(0, 120, 20))
+plt.xlabel("x", loc="right")
+plt.ylabel("y")
+
+plt.tight_layout()
+
+plt.show()
+
+################
+import numpy as np
+import matplotlib.pyplot as plt
+
+data = np.array([x for x in range(0, 100, 10)]) # x축 사용
+
+data1 = np.array([x**2 for x in range(0, 10)])  # y축 사용
+data2 = np.array([x*5 for x in range(0, 10)])
+data3 = np.array([x*3+4 for x in range(0, 10)])
+
+plt.subplot(3, 1, 1)
+# plt.subplot(3, 1, 1) 행이2 이고 열이 2인 1번 그래프
+plt.plot(data, data1, 'o-r')
+plt.title("First plot")
+plt.yticks(np.arange(0, 120, 20))
+plt.ylabel("y")
+plt.xticks(visible=False)
+# plt.xticks(visible=False) 그래프가 3개 이므로 x축이 공통으로 사용하기 때문에
+# x축의 눈금 숫자를 없애고, 맨 아래그래프 x축 눈금숫자만 남겨놓는다
+
+plt.subplot(3, 1, 2)    # 2번 그래프
+plt.plot(data, data2, 'm--')
+plt.title("Second plot")
+plt.yticks(np.arange(0, 70, 20))
+plt.ylabel("y")
+plt.xticks(visible=False)
+
+plt.subplot(3, 1, 3)    # 3번 그래프
+plt.plot(data, data3, 'y-v')
+plt.title("Third plot")
+plt.yticks(np.arange(0, 70, 20))
+plt.xlabel("x", loc="right")
+plt.ylabel("y")
+
+plt.tight_layout()
+
+plt.show()
+
+##################
+# 그래프에 텍스트 삽입하기
+
+data = np.array([x for x in range(0, 10)])
+
+plt.plot(data, data*3)
+plt.text(2, 2, "hello")
+plt.text(4, 10, "what", rotation=-90, fontdict={"family":"serif", "color":"r", "size":14})
+# plt.text(x축좌표, y축좌표).
+# rotation=90 글자 각도를 나타냄
+
+plt.show()
+
+##############
+plt.plot(data, data*3)
+plt.text(2, 2, "hello")
+
+bb1 = {
+    "boxstyle" : "round",
+    "linestyle" : "--",
+    "linewidth" : 2,
+    "ec":"r",  #엣지칼라
+    "fc":"g"   #페이스칼라(면칼라)
+}
+
+plt.text(4, 10, "what", bbox=bb1, fontdict={"color":"w"})
+
+
+plt.show()
+
+###############
+# 수직선, 수평선 그리기
+plt.plot(data, data*3)
+plt.text(2, 2, "hello")
+
+bb1 = {
+    "boxstyle" : "round",
+    "linestyle" : "--",
+    "linewidth" : 2,
+    "ec":"r",  
+    "fc":"g"   
+}
+
+plt.text(4.5, 10, "what", bbox=bb1, fontdict={"color":"w"})
+
+plt.scatter(4, 12)
+
+plt.hlines(12, 0, 4, linestyle="-.", color="y")
+# 점이 y축 12에 찍혀 있어서 수평선 값은 12임
+# plt.hlines(수평선값, x축시작점, x축끝지점) 수평선을 나타냄, y값을 봐야한다
+# hlines을 사용하면 y축과 선이 떨어져 있는 상태로 나타낼수 있다
+# 선을 붙이고 싶으면 axhlines
+
+plt.axvline(4, 0, 0.45, linestyle="--", color="r")
+# 수직선 그을때 쓴다
+# plt.axvline(수직선값, y축시작점, 비율로 따져야함(0~1사이의 값 넣어야함))
+# axvline을 사용하면 x축과 선이 맞다으면서 끊어지지않고 이을수 있다.
+
+plt.show()
+
+################
+plt.plot(data, data*3)
+plt.text(2, 2, "hello")
+
+bb1 = {
+    "boxstyle" : "round",
+    "linestyle" : "--",
+    "linewidth" : 2,
+    "ec":"r",  
+    "fc":"g"   
+}
+
+plt.text(4.5, 10, "what", bbox=bb1, fontdict={"color":"w"})
+
+plt.scatter(4, 12)
+
+plt.hlines(12, 0, 4, linestyle="-.", color="y")
+
+plt.axvline(4, 0, 0.45, linestyle="--", color="r")
+
+plt.style.use("seaborn-v0_8")
+#그래프 스타일은 plt.style.available 입력하면 원하는 스타일을 사용하면 된다.
+
+plt.show()
+
+################
+# 그래프 저장하기
+plt.figure(linewidth=5)
+
+plt.plot(data, data*3)
+plt.text(2, 2, "hello")
+
+bb1 = {
+    "boxstyle" : "round",
+    "linestyle" : "--",
+    "linewidth" : 2,
+    "ec":"r",  
+    "fc":"g"   
+}
+
+plt.text(4.5, 10, "what", bbox=bb1, fontdict={"color":"w"})
+
+plt.scatter(4, 12)
+
+plt.hlines(12, 0, 4, linestyle="-.", color="y")
+
+plt.axvline(4, 0, 0.45, linestyle="--", color="r")
+
+plt.style.use("seaborn-v0_8")
+
+#plt.show()
+
+plt.savefig("test.png", dpi = 100, facecolor="#ff0000", edgecolor="white", bbox_inches="tight",
+           pad_inches=0.5)
+# 사용자 -> 어드민 ->  파이썬워크스페이스에 저장됨
+# dpi = 50 해상도
+# facecolor="#ff0000" 그래프 주위 선이 바뀜
+# edgecolor="#ffffff"  facecolor주위 선에서 다시 그 주변선 색이 바뀜
+# bbox_inches="tight" facecolor의 면 색깔 면적이 줄어든다
+# pad_inches=0.5 여백을준다라는 의미가 있다, 빨간색 면적이 tight한 것보다 넓어진다
+
+###################
+# 객체지향 인터페이스
+
+import matplotlib.pyplot as plt
+
+data = np.array( [x for x in range(0, 10)] )
+data1 = np.array( [x*3 for x in range(0, 10)] )
+
+fig, ax = plt.subplots(2, 2)  
+# 전시간에 배울때 s가 없고 지금은 s가 있다, 헷갈리지 않도록!
+
+ax[0][0].plot(data, data1)
+ax[0][1].plot(data, data**2)
+ax[1][0].plot(data, data**2)
+ax[1][1].scatter(data, data*3)
+
+# plt.show()
+
+fig.savefig("zzz.png")
+# 또는 plt.savefig("zzz.png") 써서 저장하면 된다.
+# ax.savefig 하면 안된다.
+
+##################
+# 축 이동 및 삭제 
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+plt.style.use("default")
+
+fig, ax = plt.subplots()
+
+ax.spines["right"].set_visible(False)
+# ax.spines["right"].set_visible(False) 오른쪽 축을 없앤다.
+ax.spines["top"].set_visible(False)
+
+ax.spines["left"].set_position("center")
+# 왼쪽에 있는 축이 센터로 옴
+ax.spines["bottom"].set_position( ("data", 0))
+# data가 0하고 서로 붙어서 출력됨
+
+ax.set_yticks([x for x in range(1,10)])
+# 0,0 으로 출력되었는데 축을 이동 시켜 0 하나만 보이게 만듬
+
+data = np.linspace(-3, 3, 100) 
+# linspace(-3, 3, 100)  -3부터 3사이의 값을 100조각으로 쪼갠다는 의미
+ax.plot(data, data**2)
+plt.show()
+
+###############
+문제)
+# 교수님이 주신 코드는 그래프의 원점이 
+# x축과 y축이 만나는 좌표가 (1,0) 입니다.  이것을
+# (0,0) 이 만나도록 수정하시오
+import matplotlib.pyplot as plt
+import numpy as np
+
+
+plt.style.use("default")
+
+fig, ax = plt.subplots()
+
+ax.spines["right"].set_visible(False)
+ax.spines["top"].set_visible(False)
+
+# 문제 : ax.spines["left"].set_position(  "center"       )
+ax.spines["left"].set_position(  ("data", 0)       )   <- 정답
+ax.spines["bottom"].set_position(  ("data", 0)          )
+
+ax.set_yticks([x for x in range(1,10)])
+
+data = np.linspace(-3, 3, 100)
+ax.plot(data+1, data**2)
+plt.show()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
