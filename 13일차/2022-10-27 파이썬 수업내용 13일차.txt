@@ -1,0 +1,811 @@
+import numpy as np
+import pandas as pd
+
+np.random.seed(0)
+
+df1 = pd.DataFrame(np.random.randn(7, 4))
+df1
+출력
+            0	1	2	3
+0	1.764052	0.400157	0.978738	2.240893
+1	1.867558	-0.9772780.950088	-0.151357
+2	-0.1032190.410599	0.144044	1.454274
+3	0.761038	0.121675	0.443863	0.333674
+4	1.494079	-0.2051580.313068	-0.854096
+5	-2.5529900.653619	0.864436	-0.742165
+6	2.269755	-1.4543660.045759	-0.187184
+
+df1.columns = ['a', 'b', 'c', 'd']
+df1.index = pd.date_range('20221026', periods=7)
+df1
+출력
+	            a	b	c	d
+2022-10-26	1.764052	0.400157	0.978738	2.240893
+2022-10-27	1.867558	-0.9772780.950088	-0.151357
+2022-10-28	-0.1032190.410599	0.144044	1.454274
+2022-10-29	0.761038	0.121675	0.443863	0.333674
+2022-10-30	1.494079	-0.2051580.313068	-0.854096
+2022-10-31	-2.5529900.653619	0.864436	-0.742165
+2022-11-01	2.269755	-1.4543660.045759	-0.187184
+
+df2 = pd.DataFrame(np.random.randn(7,4), columns=['a', 'b', 'c', 'd'],
+                  index=pd.date_range('20221027', periods=7))
+df2
+출력
+	           a	b	c	d
+2022-10-27	1.532779	1.469359	0.154947	0.378163
+2022-10-28	-0.887786-1.980796-0.3479120.156349
+2022-10-29	1.230291	1.202380	-0.387327-0.302303
+2022-10-30	-1.048553-1.420018-1.7062701.950775
+2022-10-31	-0.509652-0.438074-1.2527950.777490
+2022-11-01	-1.613898-0.212740-0.8954670.386902
+2022-11-02	-0.510805-1.180632-0.0281820.428332
+
+df3 = pd.DataFrame({
+    'name':['kim', 'lee', 'park', 'jung'],
+    'mid' :[100, 60, 80, 90],
+    'final' :[90, 80, 70, 90]
+})
+df3
+출력
+          name	mid	final
+0	kim	100	90
+1	lee	60	80
+2	park	80	70
+3	jung	90	90
+
+df3.describe()
+출력
+	mid	           final
+count	4.000000 	4.000000
+mean	82.500000	82.500000
+std	17.078251	9.574271
+min	60.000000	70.000000
+25%	75.000000	77.500000
+50%	85.000000	85.000000
+75%	92.500000	90.000000
+max	100.000000	90.000000
+
+# mid, final의 각각의 총합 구하기
+df3.sum()  # df3.sum(axis=0) 같다
+출력
+name     kimleeparkjung
+mid                 330
+final               330
+dtype: object
+
+
+# 각 학생의 총합을 구하시오
+df3.sum(axis=1)
+출력        # 숫자가 아닌 문자도 같이 더해서 오류가 같이뜸
+0    190
+1    140
+2    150
+3    180
+dtype: int64
+
+df3[['mid', 'final']].sum(axis=1)
+출력
+0    190
+1    140
+2    150
+3    180
+dtype: int64
+
+# df3에 컬럼을 추가함
+# sum이라는 컬럼을 추가합니다
+# sum에는 각 행의 mid + final 값이 들어갑니다
+df3['sum'] = df3[['mid', 'final']].sum(axis=1)
+df3
+출력
+	name	mid	final	sum
+0	kim	100	90	190
+1	lee	60	80	140
+2	park	80	70	150
+3	jung	90	90	180
+
+# avg 라는 컬럼을 넣어 주세요. sum/2
+df3['avg'] = df3['sum'] / 2
+df3
+출력
+          name	mid	final	sum	avg
+0	kim	100	90	190	95.0
+1	lee	60	80	140	70.0
+2	park	80	70	150	75.0
+3	jung	90	90	180	90.0
+
+# result라는 컬럼을 추가합니다
+# avg가 80 이상이면 합격, 그렇지 않으면 불합격이라는 값이 입력되도록 하세요
+df3['result'] = df3['avg'] >= 80
+df3['result'] = df3['result'].replace(True, '합격')
+df3['result'] = df3['result'].replace(False, '불합격')
+df3
+출력
+           name	mid	final	sum	avg	result
+0	kim	100	90	190	95.0	합격
+1	lee	60	80	140	70.0	불합격
+2	park	80	70	150	75.0	불합격
+3	jung	90	90	180	90.0	합격
+
+# result 컬럼 삭제하세요
+df3 = df3.drop('result', axis=1)
+df3
+출력
+           name	mid	final	sum	avg
+0	kim	100	90	190	95.0
+1	lee	60	80	140	70.0
+2	park	80	70	150	75.0
+3	jung	90	90	180	90.0
+
+# df3이 가지고 있는 데이터, df4가 가지고 있는 데이터가 따로 생성된다
+df4 = df3.copy()
+
+def input_result(avg) :
+    result = ''
+    if avg >= 80 :
+        result='합격'
+    else :
+        result='불합격'
+        
+    return result
+####또는
+def input_result(avg) :
+    result = '합격' if avg >= 80 else '불합격'
+    return result
+
+df4['result'] = df4['avg'].apply(input_result) #apply(함수명을 적습니다.)
+df4
+출력
+          name	mid	final	sum	avg	result
+0	kim	100	90	190	95.0	합격
+1	lee	60	80	140	70.0	불합격
+2	park	80	70	150	75.0	불합격
+3	jung	90	90	180	90.0	합격
+
+# apply 함수 
+a=[]
+for avg in df4['avg'] :
+    result = input_result(avg)
+    a.append(result)
+    
+df4['result'] = a  이렇게 만들어진다
+
+test = lambda x : x**2
+test(3)
+출력
+9
+
+test2 = lambda avg : '합격' if avg >= 80 else '불합격'
+
+test2(100)          test2(50)
+출력
+'합격'               '불합격'
+
+df5 = df3.copy()
+df5
+출력
+          name	mid	final	sum	avg
+0	kim	100	90	190	95.0
+1	lee	60	80	140	70.0
+2	park	80	70	150	75.0
+3	jung	90	90	180	90.0
+
+# apply() 함수의 파라미터로 input_result()함수를 넣지 말고,
+# lambda식으로 된 함수를 이용해서 df5에 result 컬럼값을 넣으세요
+# 람다식을 사용할 때는 한줄로 코딩이 가능할 때 쓴다
+df5['result'] = df5['avg'].apply(lambda avg : '합격' if avg >= 80 else '불합격')
+df5
+
+df5['result2'] = '합격' if df5['avg'] >= 80 else '불합격'
+df5
+# 파이썬에서는 조건부 인식이 되질 않아 오류가 뜬다
+# df5['avg'].apply() 를 쓴다
+
+# info컬럼을 추가하는데, name과 result컬럼 값을 이용합니다
+# kim 님. 합격입니다.
+# name 님. result 입니다.
+
+def input_info(name, result) :
+    return name+' 님. '+ result+'입니다.' 
+
+input_info('kim', '합격')
+출력
+'kim 님. 합격입니다.'
+
+df5['name'].apply(input_info, result = df5['result'])  # apply(input_info, 함수의 두 번째 인수)
+# df5['name'].apply(input_info) 을
+# 실행하면 에러가 뜬다. 값을 2개 넣어줘야하는 name 1개만 넣어서 그렇다
+출력
+                    0                                  	1	                      2	                    3
+0	kim 님. 합격입니다.	kim 님. 불합격입니다.	kim 님. 불합격입니다.	kim 님. 합격입니다.
+1	lee 님. 합격입니다.	            lee 님. 불합격입니다.	lee 님. 불합격입니다.	lee 님. 합격입니다.
+2	park 님. 합격입니다.	park 님. 불합격입니다.	park 님. 불합격입니다.	park 님. 합격입니다.
+3	jung 님. 합격입니다.	jung 님. 불합격입니다.	jung 님. 불합격입니다.	jung 님. 합격입니다.
+
+
+def input_info3(row) :
+    return f'{row["name"]} 님, 평균 {row["avg"]} 점으로 {row["result"]}입니다.'
+
+df5.apply(input_info3, axis=1)  # axis=1 내부적으로 컬럼값이 들어간다는 것을 알려줘야한다
+출력
+0      kim 님, 평균 95.0 점으로 합격입니다.
+1     lee 님, 평균 70.0 점으로 불합격입니다.
+2    park 님, 평균 75.0 점으로 불합격입니다.
+3     jung 님, 평균 90.0 점으로 합격입니다.
+dtype: object
+
+# apply()함수에 들어가는
+# 함수의 매개변수가 df의 컬럼일 경우에는
+# df의 컬럼은 최대 2개까지만 이용하자
+
+# 만약 3개 이상이면,
+# apply함수에 들어가는
+# 함수의 매개변수를 df의 row(행)의 값이 입력하도록 하자.
+# 그리고 함수 내부에서 해당 row의 컬럼을 별도로 받도록 하자.
+# 이때, 주의사항이,
+# row.컬럼명보다
+# row["컬럼명"]으로 표기하자.
+
+# apply()함수에 들어가는
+# 함수의 매개변수가 df의 컬럼이
+# 아닐 때는,
+# 그냥 원하는 대로 하시면 되요.
+# =====>
+# apply()함수에 들어가는
+# 함수의 매개변수 중 df 컬럼이 있으면
+# df.apply(함수명, axis=1)
+# df.apply(함수명, axis=1, s1='값1', s2='값2', s3='값3')  값이 있을땐 이렇게한다
+
+# def 함수명(row):             또는 def 함수명(row, s1, s2, s3):    
+#      row["컬럼1"]명       
+
+df5
+출력
+           name	mid	final	sum	avg	result
+0	kim	100	90	190	95.0	합격
+1	lee	60	80	140	70.0	불합격
+2	park	80	70	150	75.0	불합격
+3	jung	90	90	180	90.0	합격
+
+def input_info(row) :
+    return f'{row["name"]} 님, {row["result"]}입니다.'
+
+df5['info'] = df5.apply(input_info, axis=1)
+df5
+출력
+	name	mid	final	sum	avg	result	info
+0	kim	100	90	190	95.0	합격	kim 님, 합격입니다.
+1	lee	60	80	140	70.0	불합격	lee 님, 불합격입니다.
+2	park	80	70	150	75.0	불합격	park 님, 불합격입니다.
+3	jung	90	90	180	90.0	합격	jung 님, 합격입니다.
+
+df7 = df3.copy()
+
+# df7에 result 컬럼 추가
+def input_result(row):
+    return '합격' if row['avg'] >= 80 else '불합격'
+
+df7['result'] = df7.apply(input_result, axis=1)
+df7
+출력
+           name	mid	final	sum	avg	result
+0	kim	100	90	190	95.0	합격
+1	lee	60	80	140	70.0	불합격
+2	park	80	70	150	75.0	불합격
+3	jung	90	90	180	90.0	합격
+
+# fd7에 info컬럼을 추가하세요
+# kim 님, 평균 95 점으로 합격입니다.
+def input_result(row):
+    return f'{row["name"]} 님, 평균 {row["avg"]} 점으로 {row["result"]}입니다.'
+
+df7['info'] = df7.apply(input_result, axis=1)
+df7
+출력
+           name	mid	final	sum	avg	result	info
+0	kim	100	90	190	95.0	합격	kim 님, 평균 95.0 점으로 합격입니다.
+1	lee	60	80	140	70.0	불합격	lee 님, 평균 70.0 점으로 불합격입니다.
+2	park	80	70	150	75.0	불합격	park 님, 평균 75.0 점으로 불합격입니다.
+3	jung	90	90	180	90.0	합격	jung 님, 평균 90.0 점으로 합격입니다.
+
+# 컬럼 순서 재배치 하기
+df7 = df7[['name', 'mid', 'final', 'sum', 'avg', 'result', 'info']]
+df7
+출력
+           name	mid	final	sum	avg	result	info
+0	kim	100	90	190	95.0	합격	kim 님, 평균 95.0 점으로 합격입니다.
+1	lee	60	80	140	70.0	불합격	lee 님, 평균 70.0 점으로 불합격입니다.
+2	park	80	70	150	75.0	불합격	park 님, 평균 75.0 점으로 불합격입니다.
+3	jung	90	90	180	90.0	합격	jung 님, 평균 90.0 점으로 합격입니다.
+
+#  님 -> 씨 , 평균 -> 평점 으로 바꾸기
+def input_info2(row, s1, s2) :  # s1 , s2는 그냥 값임
+    return f'{row["name"]} {s1}, {s2} {row["avg"]}점으로 {row["result"]}입니다.'
+
+df7['info'] = df7.apply(input_info2, axis=1, s1="씨", s2="평점")
+df7
+출력
+           name	mid	final	sum	avg	result	info
+0	kim	100	90	190	95.0	합격	kim 씨, 평점 95.0점으로 합격입니다.
+1	lee	60	80	140	70.0	불합격	lee 씨, 평점 70.0점으로 불합격입니다.
+2	park	80	70	150	75.0	불합격	park 씨, 평점 75.0점으로 불합격입니다.
+3	jung	90	90	180	90.0	합격	jung 씨, 평점 90.0점으로 합격입니다.
+
+# df7의 info의 내용을 input_info()함수의 것으로 대체할 겁니다.
+# 이 때, input_info()함수를 사용하지 말고, 그 내용을 람다식으로 전환해서 
+# 구현해 보세요
+df7['info'] = df7.apply(lambda row: f'{row["name"]} 님, 평균 {row["avg"]}점으로 {row["result"]}입니다.', axis=1)
+df7
+출력
+           name	mid	final	sum	avg	result	info
+0	kim	100	90	190	95.0	합격	kim 님, 평균 95.0점으로 합격입니다.
+1	lee	60	80	140	70.0	불합격	lee 님, 평균 70.0점으로 불합격입니다.
+2	park	80	70	150	75.0	불합격	park 님, 평균 75.0점으로 불합격입니다.
+3	jung	90	90	180	90.0	합격	jung 님, 평균 90.0점으로 합격입니다.
+
+#################
+pandasex7 생성
+
+import numpy as np
+import pandas as pd
+
+df1 = pd.DataFrame({
+    'id':['m1', 'm2', 'm3', 'm4', 'm5'],
+    'name':['kim', 'lee', 'kim', 'park', 'kim'],
+    'job':[1, 2, 3, 1, 1]
+})
+df1
+출력
+           id	name	job
+0	m1	kim	1
+1	m2	lee	2
+2	m3	kim	3
+3	m4	park	1
+4	m5	kim	1
+
+dic_job = {
+    1: '변호사',
+    2: '의사',
+    3: '판사'
+}
+
+df1.job.map(dic_job)  # df1의 데이터랑 job이랑 매칭시킨다는 의미
+출력
+0    변호사
+1     의사
+2     판사
+3    변호사
+4    변호사
+Name: job, dtype: object
+
+df2 = df1.copy()
+df2  카피하고
+
+df2['jobname'] = df2.job.map(dic_job)
+df2
+출력
+            id	name	job	jobname
+0	m1	kim	1	변호사
+1	m2	lee	2	의사
+2	m3	kim	3	판사
+3	m4	park	1	변호사
+4	m5	kim	1	변호사
+
+합치기
+pd.concat([df1, df2.job.map(dic_job)], axis=1)
+# 출력값에 job 이 중복 되어있다
+출력
+           id	name	job	job
+0	m1	kim	1	변호사
+1	m2	lee	2	의사
+2	m3	kim	3	판사
+3	m4	park	1	변호사
+4	m5	kim	1	변호사
+
+# 컬럼 중복된거 초기화
+df3 = pd.concat([df1, df2.job.map(dic_job)], axis=1, ignore_index=True)
+df3
+출력
+            0	1	2	3
+0	m1	kim	1	변호사
+1	m2	lee	2	의사
+2	m3	kim	3	판사
+3	m4	park	1	변호사
+4	m5	kim	1	변호사
+
+
+# columns을 이용해 다시 컬럼명 써주기
+df3.columns=['id', 'name', 'jobcode', 'job']
+df3
+출력
+           id	name	jobcode	job
+0	m1	kim	1	변호사
+1	m2	lee	2	의사
+2	m3	kim	3	판사
+3	m4	park	1	변호사
+4	m5	kim	1	변호사
+
+test = pd.DataFrame(df2.job.map(dic_job))
+test
+출력
+	job
+0	변호사
+1	의사
+2	판사
+3	변호사
+4	변호사
+
+df3.drop("jobcode", axis=1)
+출력
+	id	name	job
+0	m1	kim	변호사
+1	m2	lee	의사
+2	m3	kim	판사
+3	m4	park	변호사
+4	m5	kim	변호사
+
+df1 = pd.DataFrame({
+    'id':['m1', 'm2', 'm3', 'm4', 'm5'],
+    'name':['kim', 'lee', 'kim', 'park', 'kim'],
+    'job':[1, 2, 3, 1, 1]
+})
+df1
+출력
+            id	name	job
+0	m1	kim	1
+1	m2	lee	2
+2	m3	kim	3
+3	m4	park	1
+4	m5	kim	1
+
+test = pd.DataFrame({
+    'id':['m1', 'm2', 'm3', 'm4', 'm5'],
+    'jobname':['변호사', '의사', '검사', '변호사', '변호사']
+})
+test
+출력
+	id	jobname
+0	m1	변호사
+1	m2	의사
+2	m3	검사
+3	m4	변호사
+4	m5	변호사
+
+# df1, test 합치기
+pd.merge(df1, test)
+# concat을 이용하는 것보다 깔끔하게 나온다
+출력
+            id	name	job	jobname
+0	m1	kim	1	변호사
+1	m2	lee	2	의사
+2	m3	kim	3	검사
+3	m4	park	1	변호사
+4	m5	kim	1	변호사
+
+##################
+# 통계적 가설 검정
+# - 가설: 이론을 가정함..
+# - 검정: 검증한다.
+
+# 통계
+# - 기술 통계: 최댓값, 최솟값, 평균값, 중간값 등등
+# - 추론 통계: 어떤 값이 발생할 확률을 계산하는 통계 기법
+# =========
+# 평균을 이용합니다.
+# 귀무가설: 두 데이터는 평균의 차이가 없다          암기하기!
+# 대립가설: 두 데이터는 평균의 차이가 있다.         암기하기!
+
+###문제
+# 어느 백화점에서 
+# 고객의 성별에 따른 평균 매출액의 차이가 있는지
+# 확인(통계적 가설 검정)하려고 합니다
+
+# 귀무가설과 대립가설을 만들어 주세요
+# 귀무가설: 고객의 성별에 따른 매출 평균의 차이가 없다  
+#          -  남성고객의 매출 평균과 여성 고객의 매출 평균은 차이가 없다
+# 대립가설: 고객의 성별에 따른 매출 평균의 차이가 있다.
+#          -  남성고객의 매출 평균과 여성 고객의 매출 평균은 차이가 있다
+
+###문제
+# 어떤 제약회사에서
+# 암 환자를 대상으로 신약의 효능을 검증하려고 합니다.
+# 신약을 복용자(실험군) Vs 신약 미복용자(대조군)
+# 귀무가설: 실험군과 대조군의 신약의 효능 평균의 차이가 없다 
+# 대립가설: 실험군과 대조군의 신약의 효능 평균의 차이가 있다 
+
+###문제
+# 어떤 출판사에서 수능 수학 문제집을 출판했습니다.
+# 학생들을 대상으로
+# 해당 문제집을 풀기 전과 해당 문제집을 푼 후의 수학 점수를 검증하려고 합니다.
+# 100명이라는 사람이 있다.
+# 해당 문제집을 풀기 전에 시험을 보고
+# 해당 문제집을 푼 후에 시험을 봅니다
+# 귀무가설: 수능 수학 문제집을 풀기 전과 후의 수학 점수 평균의 차이가 없다 
+# 대립가설: 수능 수학 문제집을 풀기 전과 후의 수학 점수 평균의 차이가 있다 
+
+# t-test: 두 데이터의 평균이 같을 확률을 제공합니다.
+# p-value: 두 데이터의 평균이 같을 확률... 0~1
+# p-value: 1 = 100% --- 귀무가설 채택, 대립가설 기각
+# p-value: 0.5 = 50% --- 귀무가설 채택, 대립가설 기각
+# p-value: 0.1 = 10% --- 귀무가설 채택, 대립가설 기각
+
+# p-value: 0.05 = 5% --- 귀무가설 기각, 대립가설 채택   중요함!!!! 0.05 기준이되는값 중요함
+# p-value: 0.02+++  --- 귀무가설 기각, 대립가설 채택
+
+# p-value: 3.1483245498318e-10 = 0.0000000000314832~  
+#     --- 0.05보다 값이 낮으니 귀무가설 기각, 대립가설 채택 이다
+
+
+np.random.seed(0)
+
+tdata = pd.DataFrame(np.random.randn(1000000, 2))
+
+import matplotlib.pyplot as plt
+
+plt.hist(tdata[0])
+plt.show()
+
+plt.hist(tdata[1])
+plt.show()
+
+import scipy.stats as stats
+
+stats.normaltest(tdata[0])
+# tdata[0]의 정규성(정규분포)을 띄고 있는지 판별하는 작업
+# 출력값에 pvalue=0.49816092013705815 나옴
+# 값이 0.05보다 크기 때문에 
+# 귀무가설 채택, 대립가설 기각
+# 귀무가설: tdata[0]의 분포와 정규분포는 평균의 차이가 없다. : tdata[0]은 정규분포를 따른다
+# 대립가설: tdata[0]의 분포와 정규분포는 평균의 차이가 있다. : tdata[0]은 정규분포를 따르지 않는다
+출력
+NormaltestResult(statistic=1.3936642426966153, pvalue=0.49816092013705815)
+
+##############
+# tdata[1]의 정규분포성을 평가하시오
+stats.normaltest(tdata[1])
+# pvalue=0.6825914194096625  값이 0.05보다 크다
+# 귀무가설 채택, 대립가설 기각
+# 귀무가설: tdata[1]의 분포와 정규분포는 평균의 차이가 없다. : tdata[1]은 정규분포를 따른다
+# 대립가설: tdata[1]의 분포와 정규분포는 평균의 차이가 있다. : tdata[1]은 정규분포를 따르지 않는다
+출력
+NormaltestResult(statistic=0.7637176260804992, pvalue=0.6825914194096625)
+
+tdata[0].var()                          tdata[1].var()
+출력
+0.9975953880132662                 1.0000226971987973
+
+# 등분산성
+# 귀무가설: 두 데이터는 분산의 차이가 없다.  채택
+# 대립가설: 두 데이터는 분산의 차이가 있다.  기각
+stats.levene(tdata[0], tdata[1])
+출력
+LeveneResult(statistic=1.8705581014128545, pvalue=0.1714113268103053)
+
+stats.ttest_ind(tdata[0], tdata[1])
+# 귀무가설: 두 데이터는 평균의 차이가 없다.  채택
+# 대립가설: 두 데이터는 평균의 차이가 있다.  기각
+출력
+Ttest_indResult(statistic=-0.9164329135315703, pvalue=0.3594399894375425)
+
+##########
+###문제
+# tdata[0] 과 tdata[1]에 대해 각각 정규분포성을 검증하라.
+# 가설을 먼저 세운 후 테스트하시오
+
+# tdata[0] 과 tdata[1]의 등분산성 대해 검증하라.
+# 가설을 먼저 세운 후 테스트하시오
+
+# tdata[0] 과 tdata[1]의 평균에 대해 검증하라.
+# 가설을 먼저 세운 후 테스트하시오
+
+np.random.seed(0)
+
+tdata2 = pd.DataFrame(np.random.rand(1000000, 2))
+
+import matplotlib.pyplot as plt
+
+plt.hist(tdata2[0])
+plt.show()
+
+plt.hist(tdata2[1])
+plt.show()
+
+import scipy.stats as stats
+
+stats.normaltest(tdata2[0])
+# 0.05 보다 값이 작다
+# 귀무가설: tdata2[0]의 분포와 정규분포는 평균의 차이가 없다. tdata2[0]은 정규분포를 따른다
+# 대립가설: tdata2[0]의 분포와 정규분포는 평균의 차이가 있다. tdata2[0]은 정규분포를 따르지 않는다
+# 대립가설 채택, tdata2[0]은 정규분포를 따르지 않는다
+출력
+NormaltestResult(statistic=899580.7149501145, pvalue=0.0)
+
+stats.normaltest(tdata2[1])
+# 0.05 보다 값이 작다
+# 귀무가설: tdata2[1]의 분포와 정규분포는 평균의 차이가 없다. tdata2[1]은 정규분포를 따른다
+# 대립가설: tdata2[1]의 분포와 정규분포는 평균의 차이가 있다. tdata2[1]은 정규분포를 따르지 않는다
+# 대립가설 채택, tdata2[1]은 정규분포를 따르지 않는다.
+출력
+NormaltestResult(statistic=900089.660781863, pvalue=0.0)
+
+
+stats.levene(tdata2[0], tdata2[1])
+# 0.05 보다 값이 크다
+# 귀무가설: 두 데이터는 분산의 차이가 없다. 
+# 대립가설: 두 데이터는 분산의 차이가 있다. 
+# 귀무가설 채택
+출력
+LeveneResult(statistic=0.039315671924352084, pvalue=0.8428246112269031)
+
+stats.ttest_ind(tdata2[0], tdata2[1])
+# 0.05 보다 값이 크다
+# 귀무가설: 두 데이터는 평균의 차이가 없다. 
+# 대립가설: 두 데이터는 평균의 차이가 있다. 
+# 귀무가설 채택
+출력
+Ttest_indResult(statistic=-0.6640866077033694, pvalue=0.5066349576588207)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
