@@ -1,0 +1,1108 @@
+어떤 사건이 우연히 발생했다
+- 다음에 일어날 가능성이 높을까요?
+
+우연이냐, 필연이냐..
+귀무가설: 두 데이터의 관계는 상관 관계가 없다.(우연히 일어났다)
+대립가설: 두 데이터의 관계는 상관 관계가 있다.(우연히 일어난게 아니다)
+
+import numpy as np
+import pandas as pd
+import seaborn as sns
+
+df = sns.load_dataset('titanic')
+df.head()
+
+df.tail()
+
+# survived: 생존여부(0:사망, 1:생존)
+# pclass: 좌석등급 숫자표시(1등칸:!, 2등칸:2, 3등칸:3)
+# sex: 성별(성인 여부를 확인하지 않고 남녀로만 구분)
+# age: 나이
+# sibsp: 남매 + 배우자 수
+# parch: 부모 + 자녀 수
+# fare: 요금(파운드)
+# embarked: 탑승항구 코드(S,C,Q)
+# class: 좌석등급 문자표시
+# who: 성인 남성과 성인 여성 그리고 아이들(성별 구분 안함)
+# adult_male: 성인 남성 여부
+# deck: 갑판.. 배의 상부에 있는 지붕 역할을 함
+# embark_town: 탑승항구명
+# alive: 생존여부(yes or no)
+# alone: 혼자 탑승 여부
+
+###################
+df1 = df.copy()
+df1.describe()
+
+df.info()
+출력
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 891 entries, 0 to 890
+Data columns (total 15 columns):
+ #   Column       Non-Null Count  Dtype   
+---  ------       --------------  -----   
+ 0   survived     891 non-null    int64   
+ 1   pclass       891 non-null    int64   
+ 2   sex          891 non-null    object  
+ 3   age          714 non-null    float64 
+ 4   sibsp        891 non-null    int64   
+ 5   parch        891 non-null    int64   
+ 6   fare         891 non-null    float64 
+ 7   embarked     889 non-null    object  
+ 8   class        891 non-null    category
+ 9   who          891 non-null    object  
+ 10  adult_male   891 non-null    bool    
+ 11  deck         203 non-null    category
+ 12  embark_town  889 non-null    object  
+ 13  alive        891 non-null    object  
+ 14  alone        891 non-null    bool    
+dtypes: bool(2), category(2), float64(2), int64(4), object(5)
+memory usage: 80.7+ KB
+
+# pclass와 deck의 관계가 있는지 그래프를 이용해서 확인해 주세요
+import matplotlib.pyplot as plt
+
+plt.hist(df1['deck'].dropna(), label=df1['pclass'])
+plt.legend()
+plt.show()
+
+sns.countplot(data=df1, x='deck', hue='pclass');
+
+# deck가 NaN인 행을 가져오시오
+# pclass 컬럼만 가져오시오
+df1.loc[df1['deck'].isna(), 'pclass'].hist();
+# 결과값을 보면 1등급에 있으며 데이터값이 없는 사람이 100명미만 있고
+# 2등급에 있으며 데이터 값이 없는 사람이 200명 미만 있고
+# 3등급에 있으며 데이터 값이 없는 사람이 500명 미만 있다.
+
+# df1에서 deck가 NaN이 아닌 행을 추출하고,
+# pclass 컬럼만 추출하세요
+df1.loc[df1['deck'].notna(), ['pclass', 'deck']]
+
+df1.groupby('pclass').mean()
+
+gb_pc_df1 = df1.groupby('pclass')
+gb_pc_df1.groups
+
+
+for name, group in gb_pc_df1 :
+    print(name, ':', len(group))
+    print(group.mean())
+
+# 흩어져 있는 것을 그룹화해서 모아준다
+이렇게 작성하는건 보여주시려고 작성한 것임
+
+# sex별 그룹화
+# 성별에 따른 평균 생존률을 확인하고 싶습니다
+# 구현하세요
+df1.groupby('sex').mean()['survived']
+출력
+sex
+female    0.742038
+male      0.188908
+Name: survived, dtype: float64
+
+# 성인 남성, 성인 여성, 미성년자 남성(mc), 미성년자 여성(wc) 정보를 갖고 있는 gender 컬럼 생성
+# df1의 who 컬럼의 값이 man이나 woman이면 그냥 자기가 갖고 있는 값을 gender에 넣고
+# child이면
+# sex 컬럼을 확인해서
+# sex 컬럼의 값이 male이면 mc
+# sex 컬럼의 값이 female이면 wc가 됨
+# 함수명은 confirm_child_sex()
+
+def confirm_child_sex(row) :
+    if row['who'] == 'child' :
+        if row['sex'] == 'male'  :
+            return 'mc'
+        else :
+            return 'wc'
+    
+    else :
+        return row['who']   
+
+df1['gender'] = df1.apply(confirm_child_sex, axis=1)
+df1['gender'].unique()
+
+df1.head(20)
+
+df1.groupby('gender').mean()
+
+# gender 와 survived 사이에 인과관계가 있을까요?
+# gender 와 survived 사이에 상관관계가 있다. 없다.
+# gender 와 survived 사이에 우연성이 있다. 없다.
+# 가설: 귀무가설, 대립가설
+# 귀무가설: 두 컬럼 사이에는 상관 관계가 없다.(우연성이 있다)
+# 대립가설: 두 컬럼 사이에는 상관 관계가 있다.(우연성이 없다)
+
+# chi square test(카이 제곱 테스트)
+gen_sur_crosstable_df1 = pd.crosstab(df1['gender'], df1['survived'])
+gen_sur_crosstable_df1
+
+import scipy.stats as stats
+
+stats.chi2_contingency(gen_sur_crosstable_df1)
+# contingency 우연성이라는 뜻임
+# 1.4968007259779321e-61 이값이 pvalue 이다
+# 대립가설이 채택이 됨
+
+df1[['gender', 'fare']].mean()
+출력
+fare    32.204208
+dtype: float64
+
+# genfer 별로 평균 요금(fare)을 산출하시오
+df1.groupby('gender').mean()[['fare']]
+출력
+               fare
+gender	
+man	24.864182
+mc	34.380522
+wc	31.302328
+woman	46.570711
+
+df2 = df1.groupby('gender').mean()[['fare']]
+df2[['fare']].reset_index()
+출력
+	gender	fare
+0	man	24.864182
+1	mc	34.380522
+2	wc	31.302328
+3	woman	46.570711
+
+# gender 와 fare 사이에 상관관계가 있을까요?
+# 귀무가설: gender와 fare는 상관 관계가 없다.(우연이다)
+# 대립가설: gender와 fare는 상관 관계가 있다.(우연이 아니다)
+gen_fare_crosstable_df1 = pd.crosstab(df1['gender'], df1['fare'])
+gen_fare_crosstable_df1
+
+stats.chi2_contingency(gen_fare_crosstable_df1)
+# 2.2290926485639563e-21 pvalue임
+# 대립가설 채택
+
+##############
+# groupby 2
+
+# groupby를 가지고 여러가지를 사용가능하다
+group_pc_gen = df1.groupby(['pclass', 'gender'])
+
+for name, group in group_pc_gen :
+    print(name, ':', len(group))
+    print(group)
+
+group_pc_gen[['survived', 'alone']].mean().reset_index()
+
+group_pc_gen[['survived', 'alone']].agg(['mean', 'sum', 'min', 'max', 'std'])
+
+# pivot_table() 은 우리가 보고싶은 목록을 미리 설정할 수 있다는점이 편리하다
+# groupby 는 전부다 보고 싶을 때 쓰는게 편리하다
+df1.pivot_table(index='gender', values='survived')  /// df1.groupby('gender').mean()[['survived']]  이거랑 같다
+# 출력값은 평균값을 나타낸다
+출력
+	survived
+gender	
+man	0.163873
+mc	0.525000
+wc	0.651163
+woman	0.756458
+
+df1.pivot_table(index='gender', values='survived', aggfunc=['mean', 'sum', 'max'])
+# aggfunc 을 이용해서 평균의 목록을 늘릴수 있다
+출력
+           mean	sum	max
+           survived	survived	survived
+gender			
+man	0.163873	88	1
+mc	0.525000	21	1
+wc	0.651163	28	1
+woman	0.756458	205	1
+
+# 1 평균 t 검정
+# 내 연봉이 다른 사람들의 평균 연봉과 비교 했을때
+# 그 안에 포함되는지 밖에 해당하는지
+mysalary = 5000
+
+df_salary = pd.DataFrame({
+    'salary' : [x*1000 for x in range(10)]
+})
+df_salary
+
+# 가설
+# 귀무가설: 내 연봉은 전체 평균 연봉과 평균의 차이가 없다
+# 대립가설: 내 연봉은 전체 평균 연봉과 평균의 차이가 있다
+
+# 1 평균 t 검정
+stats.ttest_1samp(df_salary, mysalary)
+# pvalue=array([0.61411725])
+# 귀무가설 채택
+출력
+Ttest_1sampResult(statistic=array([-0.52223297]), pvalue=array([0.61411725]))
+
+# 1 평균 t 검정
+mysalary = 2000
+stats.ttest_1samp(df_salary, mysalary)
+# pvalue=array([0.0282168]
+# 대립가설 채택
+출력
+Ttest_1sampResult(statistic=array([2.61116484]), pvalue=array([0.0282168]))
+
+# 1 평균 t 검정
+mysalary = 8000
+stats.ttest_1samp(df_salary, mysalary)
+# pvalue=array([0.00527119])
+# 대립가설 채택(아주 기쁘게 채택)
+출력
+Ttest_1sampResult(statistic=array([-3.65563078]), pvalue=array([0.00527119]))
+
+# 전체의 평균 생존율을 구하시오
+df1['survived'].mean()
+출력
+0.3838383838383838
+
+# gender 컬럼의 man 평균 생존율을 구하시오
+df1.pivot_table(index='gender', values='survived').iloc[0]
+출력
+survived    0.163873
+Name: man, dtype: float64
+
+# 통계적 가설 검정을 해 보세요
+# 성인 남성의 평균 생존율은 전체 평균 생존율 안에 있나?
+# 가설부터 정리하세요
+
+# 귀무가설: 성인 남성의 평균 생존율은 전체 평균 생존율과 평균의 차이가 없다
+# 대립가설: 성인 남성의 평균 생존율은 전체 평균 생존율과 평균의 차이가 있다
+
+# 1 평균 t 검정
+stats.ttest_1samp(df1['survived'], df1.pivot_table(index='gender', values='survived').iloc[0])
+# pvalue=survived    6.883694e-38
+# 대립가설 채택
+출력
+Ttest_1sampResult(statistic=survived    13.493577
+Name: man, dtype: float64, pvalue=survived    6.883694e-38
+Name: man, dtype: float64)
+
+# 독립표본 t 검정
+# 혼자 여행한 사람과 그렇지 않은 사람의 평균 생존율의 차이가 있을까요?
+df1['alone'] == True
+
+# 귀무가설: 혼자 여행한 사람과 그렇지 않은 사람의 평균 생존율과 평균의 차이가 없다
+# 대립가설: 혼자 여행한 사람과 그렇지 않은 사람의 평균 생존율과 평균의 차이가 있다
+
+# 혼자 여행한 사람
+df1[df1['alone'] == True]['survived'] 
+
+# 그렇지 않은 사람
+df1[ ~ df1['alone'] == True]['survived']
+# ~ 물결 표시는 반전 연산자 라고 한다
+# 결과가 True이면 반대로 False로 나온다
+
+# 독립표본 t 검정
+stats.ttest_ind(df1[df1['alone'] == True]['survived'], df1[ ~ df1['alone'] == True]['survived'])
+출력
+Ttest_indResult(statistic=-6.193032488079413, pvalue=9.009490179329658e-10)
+
+#####################
+pandasex9 생성
+
+import numpy as np
+import pandas as pd
+import seaborn as sns
+import scipy.stats as stats
+
+df1 = pd.DataFrame({
+    'id' : [x for x in range(9)],
+    'phone' : ['apple', 'ss', 'ss', 'ss', 'apple', 'wh', 'wh', 'apple', 'apple'],
+    'name' : ['김', '이', '박', '최', '박', '박', '강', '태', '홍']
+})
+df1
+출력
+           id	phone	name
+0	0	apple	김
+1	1	ss	이
+2	2	ss	박
+3	3	ss	최
+4	4	apple	박
+5	5	wh	박
+6	6	wh	강
+7	7	apple	태
+8	8	apple	홍
+
+df1.info()
+출력
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 9 entries, 0 to 8
+Data columns (total 3 columns):
+ #   Column  Non-Null Count  Dtype 
+---  ------  --------------  ----- 
+ 0   id      9 non-null      int64 
+ 1   phone   9 non-null      object
+ 2   name    9 non-null      object
+dtypes: int64(1), object(2)
+memory usage: 344.0+ bytes
+
+phone_cat = df1['phone'].astype('category')
+phone_cat
+# 타입이 Dtype 에서 category 로 바뀜
+# 문자로된 데이터타입이 object로 되어있는데 용량을 많이 먹어
+# category로 변경하고 분석을 한다.
+출력
+0    apple
+1       ss
+2       ss
+3       ss
+4    apple
+5       wh
+6       wh
+7    apple
+8    apple
+Name: phone, dtype: category
+Categories (3, object): ['apple', 'ss', 'wh']
+
+phone_cat.values
+출력
+['apple', 'ss', 'ss', 'ss', 'apple', 'wh', 'wh', 'apple', 'apple']
+Categories (3, object): ['apple', 'ss', 'wh']
+
+phone_cat.value_counts()
+출력
+apple    4
+ss       3
+wh       2
+Name: phone, dtype: int64
+
+phone_cat.values.codes
+출력
+array([0, 1, 1, 1, 0, 2, 2, 0, 0], dtype=int8)
+
+df1['phone'] = df1['phone'].astype('category')
+df1.info()
+출력
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 9 entries, 0 to 8
+Data columns (total 3 columns):
+ #   Column  Non-Null Count  Dtype   
+---  ------  --------------  -----   
+ 0   id      9 non-null      int64   
+ 1   phone   9 non-null      category    <---이 부분
+ 2   name    9 non-null      object  
+dtypes: category(1), int64(1), object(1)
+memory usage: 413.0+ bytes
+# phone만 category 로 바뀜
+
+# phone 의 코드가 나옴
+df1['phone'].cat.codes
+출력
+0    0
+1    1
+2    1
+3    1
+4    0
+5    2
+6    2
+7    0
+8    0
+dtype: int8
+
+# phone 의 인덱스가 나옴
+df1['phone'].cat.categories
+출력
+Index(['apple', 'ss', 'wh'], dtype='object')
+
+# 폰의 카테고리에 더 추가하기
+df1['phone'] = df1['phone'].cat.set_categories(['apple', 'ss', 'wh', 'som'])
+df1['phone']
+출력
+0    apple
+1       ss
+2       ss
+3       ss
+4    apple
+5       wh
+6       wh
+7    apple
+8    apple
+Name: phone, dtype: category
+Categories (4, object): ['apple', 'ss', 'wh', 'som']
+
+# df1에 id=9, phone=som, name=jin row를 추가하세요
+<방법1>
+df2 = df1.copy()
+df2.loc[10] = [9, 'som', 'jin']
+df2
+# 이렇게 하면 df2.info() 보면 
+# phone   object 로 변경되어 있다 그럼 다시 카테고리로 바꿔주면된다
+출력
+           id	phone	name
+0	0	apple	김
+1	1	ss	이
+2	2	ss	박
+3	3	ss	최
+4	4	apple	박
+5	5	wh	박
+6	6	wh	강
+7	7	apple	태
+8	8	apple	홍
+10	9	som	jin
+
+df2.info()
+<class 'pandas.core.frame.DataFrame'>
+Int64Index: 10 entries, 0 to 10
+Data columns (total 3 columns):
+ #   Column  Non-Null Count  Dtype 
+---  ------  --------------  ----- 
+ 0   id      10 non-null     int64 
+ 1   phone   10 non-null     object   <---이 부분
+ 2   name    10 non-null     object
+dtypes: int64(1), object(2)
+memory usage: 320.0+ bytes
+
+<방법2>
+concat으로 두 데이터를 합친다
+ 
+df2 = pd.DataFrame({
+    'id':[9],
+    'phone' : ['som'],
+    'name' : ['jin']
+})
+df2.info()
+# phone   object 를 astype로 사용해서 카테고리를 만들어 준다
+
+df1 = pd.concat([df1, df2], ignore_index=True)
+df1
+# 데이터를 합치기 하고 df1.info() 를 보면 다시 object로 되어 있다
+# 그럼 object 를 astype로 사용해서 카테고리를 만들어 준다
+출력
+	id	phone	name
+0	0	apple	김
+1	1	ss	이
+2	2	ss	박
+3	3	ss	최
+4	4	apple	박
+5	5	wh	박
+6	6	wh	강
+7	7	apple	태
+8	8	apple	홍
+9	9	som	jin
+
+df1.info()
+출력
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 10 entries, 0 to 9
+Data columns (total 3 columns):
+ #   Column  Non-Null Count  Dtype 
+---  ------  --------------  ----- 
+ 0   id      10 non-null     int64 
+ 1   phone   10 non-null     object   <---이 부분
+ 2   name    10 non-null     object
+dtypes: int64(1), object(2)
+memory usage: 368.0+ bytes
+
+# 다시 object을 카테고리로 만든다
+df1['phone'] = df1['phone'].astype('category')
+df1.info()
+출력
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 10 entries, 0 to 9
+Data columns (total 3 columns):
+ #   Column  Non-Null Count  Dtype   
+---  ------  --------------  -----   
+ 0   id      10 non-null     int64   
+ 1   phone   10 non-null     category   <---이 부분
+ 2   name    10 non-null     object  
+dtypes: category(1), int64(1), object(1)
+memory usage: 502.0+ bytes
+
+<방법3>
+def df_append(df, phone, name) :
+    
+    df.loc[len(df.index)] = [len(df.index), phone, name]
+    
+    df["phone"] = df["phone"].astype("category")
+    
+    return df
+
+df1 = df_append(df1, "wh", "nam")
+df1
+출력
+	id	phone	name
+0	0	apple	김
+1	1	ss	이
+2	2	ss	박
+3	3	ss	최
+4	4	apple	박
+5	5	wh	박
+6	6	wh	강
+7	7	apple	태
+8	8	apple	홍
+9	9	som	jin
+10	10	wh	nam
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
