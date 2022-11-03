@@ -1,0 +1,708 @@
+# cov19.csv 파일을 이용해서
+# df
+# df1
+
+# df2
+# 1. 2020, 2021, 2022년도별로
+# 서울시 추가 확진자 수를 막대 그래프로 그려 보세요
+
+# df3
+# 2. 2021년도의 월별로
+# 서울시 추가 확진자 수를 라인(선) 그래프로 그려 보세요
+
+# df4
+# 3. 2022년 10월의 일자별로
+# 서울시 추가 확진자 수를 라인(선) 그래프로 그려 보세요
+# 전국 추가 확진자 수를 라인(선) 그래프로 그려 보세요
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from pytimekr import pytimekr
+
+df = pd.read_csv('cov19.csv')  # 한글이 깨져있고 그대로 사용하고 싶으면 encoding='ANSI'넣는다
+df.head()
+
+df2 = df.copy()
+df2.info()
+출력
+ 0   서울시 기준일            1001 non-null   object 
+
+df2['서울시 기준일'] = pd.to_datetime(df2['서울시 기준일'])
+df2.info()
+# 서울시 기준일 datetime64[ns]으로 바뀜
+출력
+0   서울시 기준일            1001 non-null   datetime64[ns]
+
+df2['date'] = df2['서울시 기준일'].dt.normalize()
+df2.head(1)
+
+df2['날짜'] = df2['date']
+df2['year'] = df2['date'].dt.year
+df2['month'] = df2['date'].dt.month
+df2['day'] = df2['date'].dt.day
+df2.head(1)
+
+df2 = df2.set_index('날짜')
+df2.head(1)
+
+## 2020, 2021, 2022 서울시 추가 확진에 대한 line 그래프를 그리시오.
+
+df2_2020_all_all = df2.loc['2020', '서울시 추가 확진']
+df2_2021_all_all = df2.loc['2021', '서울시 추가 확진']
+df2_2022_all_all = df2.loc['2022', '서울시 추가 확진']
+
+plt.rc('font', family='Malgun Gothic')
+
+# 막대 그래프
+fig, ax = plt.subplots()
+ax.boxplot([df2_2020_all_all, df2_2021_all_all, df2_2022_all_all])
+ax.set_xticks([1, 2, 3], [2020, 2021, 2022]) # boxplot로 하면 set_xticks으로 작성
+plt.show()
+
+# 선 그래프
+# log를 사용하여 그래프 만들기
+fig, ax = plt.subplots()
+ax.plot(np.log10(df2_2020_all_all))
+ax.plot(np.log10(df2_2021_all_all))
+ax.plot(np.log10(df2_2022_all_all))
+
+plt.show()
+
+x = np.arange(0, 3)
+y1 = x**2 + 1
+y2 = np.log10(y1)
+
+print(x, y1, y2)
+출력
+[0 1 2] [1 2 5] [0.      0.30103 0.69897]
+
+fig, ax = plt.subplots()
+ax.plot(x, y1, color='r')
+
+ax2 = ax.twinx()
+ax2.plot(x, y2, color='g')
+plt.show()
+
+fig, ax = plt.subplots()
+ax.plot(x, y1, color='r')
+
+ax2 = ax.twinx()   # twinx(): x축만 공유하고 y축은 따로 써라 라는 뜻입니다.
+ax2.plot(x, y2, color='g')
+ax2.set_yticks([])  # 우측에 있던 숫자가 없어짐
+plt.show()
+
+우선 1개만 보자
+fig, ax = plt.subplots()
+
+ax.plot(df2_2020_all_all, color='w')   # 로그 안쓴거
+ax1 = ax.twinx()    
+ax1.plot(np.log10(df2_2020_all_all))   # 로그 쓴거
+ax1.set_yticks([])
+ 
+plt.show()
+
+############
+fig, ax = plt.subplots()
+ax1 = ax.twinx()  
+
+ax.plot(df2_2020_all_all, color='w')   # 로그 안쓴거
+ax1.plot(np.log10(df2_2020_all_all))   # 로그 쓴거
+
+ax.plot(df2_2021_all_all, color='w')   # 로그 안쓴거
+ax1.plot(np.log10(df2_2021_all_all))   # 로그 쓴거
+
+ax.plot(df2_2022_all_all, color='w')   # 로그 안쓴거
+ax1.plot(np.log10(df2_2022_all_all))   # 로그 쓴거
+
+ax1.set_yticks([]) 
+plt.show()
+
+###############
+## 2021년 월별 서울시 추가 확진에 대한 line 그래프를 그리시오.
+df2.head(1)
+
+df2_2021_all_all  # 시리즈로 나옴
+
+df2_2021_all_all = df2.loc['2021']
+
+df2_2021_all_all_sum = df2_2021_all_all.pivot_table(index='month', values=['서울시 추가 확진'], aggfunc=['sum'])
+df2_2021_all_all_sum
+출력
+	sum
+           서울시 추가 확진
+month	
+1	5168
+2	4083
+3	3803
+4	5811
+5	6303
+6	6075
+7	14377
+8	15019
+9	21148
+10	19123
+11	34711
+12	70977
+
+x_month = [x for x in range(1, 13)] 
+# 1이 나오면 그 1이 나와서 x에 들어가 리스트안에 1이 들어간다
+
+plt.plot(df2_2021_all_all_sum)
+plt.xticks(x_month)
+plt.show()
+
+# 2021년 10월의 일자별로
+# 서울시 추가 확진자 수를 라인(선) 그래프로 그려 보세요.
+# 전국 추가 확진자 수를 라인(선) 그래프로 그려 보세요.
+df2_2021_10_all = df2.loc['2021-10']
+df2_2021_10_all.head()
+
+plt.plot(df2_2021_10_all.loc[:, '서울시 추가 확진'])
+# 모든행의 서울시 추가 확진 컬럼
+plt.plot(df2_2021_10_all.loc[:, '전국 추가 확진'])
+plt.show()
+
+df2_2021_10_all.columns
+# 컬럼명 확인
+출력
+Index(['서울시 기준일', '서울시 확진자', '서울시 추가 확진', '서울시 치료중', '서울시 퇴원', '서울시 추가 퇴원',
+       '서울시 사망', '서울시 의심환자 전체', '서울시 의심환자 검사중', '서울시 의심환자 검사결과(음성)', '전국 기준일',
+       '전국 확진', '전국 추가 확진', '전국 치료중', '전국 퇴원', '전국 사망', '전국 의심환자 전체',
+       '전국 의심환자 검사중', '전국 의심환자 검사결과(음성)', '자가격리자 해외입국자 감시중',
+       '자가격리자 해외입국자 감시해제', '자가격리자 접촉자 감시중', '자가격리자 접촉자 감시해제', '확인중 확진자',
+       '서울시 당일사망자', '전국 당일 사망자', 'date', 'year', 'month', 'day'],
+      dtype='object')
+
+##########
+# 1. 서울시와 전국의 2021년 10월의 추가 확진자의 평균에는 차이가 있는지
+#    통계적 가설 검증을 해 보세요.
+# - 귀무가설: ~평균의 차이가 없다. 연관성이 없다.
+# - 대립가설: ~평균의 차이가 있다. 연관성이 있다.
+
+import scipy.stats as stats
+
+stats.ttest_ind(df2_2021_10_all.loc[:, '서울시 추가 확진'], df2_2021_10_all.loc[:, '전국 추가 확진'])
+# pvalue=2.1212977546992815e-21
+# 0.05 보다 값이 작다
+# 귀무가설: 서울시와 전국의 2021년 10월의 추가 확진자 평균은 차이가 없다.
+# 대립가설: 서울시와 전국의 2021년 10월의 추가 확진자 평균은 차이가 있다.
+# 대립가설 채택
+# statistic=-14.591697513267283 뜻은 
+# 서울시가 전국보다 -14만큼 적다라는 뜻이다
+출력
+Ttest_indResult(statistic=-14.591697513267283, pvalue=2.1212977546992815e-21)
+
+#######
+df2.loc[:, ['전국 확진', '전국 추가 확진', '전국 사망']].corr()
+출력
+	          전국 확진	전국 추가 확진 전국 사망
+전국 확진	1.000000	0.372056	0.984412
+전국 추가 확진	0.372056	1.000000	0.387272
+전국 사망	0.984412	0.387272	1.000000
+
+# 상관관계가 있는지, 우연성이 아닌지 확인하려면, chi square test
+# 귀무가설: 둘 사이에는 상관 관계가 없다. 우연히 발생했다
+# 대무가설: 둘 사이에는 상관 관계가 있다. 우연히 발생한게 아니다.
+
+df2_crosstable = pd.crosstab(df2['전국 확진'], df2['전국 사망'])
+df2_crosstable
+
+stats.chi2.contingency(df2_crosstable)
+
+###########################################################
+# 서울시의 2020, 2021, 2022년의 사망자의 합을 bar차트로 표기
+# 서울시의 2022년 월별 사망자의 합을 bar 차트로 표기
+# 각 월별 마지막 max
+# 서울시의 2022년 10월 사망자를 라인 차트로 표기
+
+# 서울시의 2020, 2021, 2022년의 사망자의 합을 bar 차트로 표기
+df2_2020_dead = df2.loc['2020', '서울시 사망'].max()
+df2_2021_dead = df2.loc['2021', '서울시 사망'].max()
+df2_2022_dead = df2.loc['2022', '서울시 사망'].max()
+
+plt.bar([2020], [df2_2020_dead])
+plt.bar([2021], [df2_2021_dead])
+plt.bar([2022], [df2_2022_dead])
+
+plt.show()
+
+# 서울시의 2022년 월별 사망자의 합을 bar 차트로 표기
+df2_2022 = df2.loc['2022']
+
+df2_2022.columns 컬럼명 확인
+
+df2_2022_month_dead = df2_2022.pivot_table(index='month', values=['서울시 당일사망자'], aggfunc=['sum'])['sum']
+df2_2022_month_dead
+출력
+	서울시 당일사망자
+month	
+1	0.0
+2	36.0
+3	1158.0
+4	1019.0
+5	239.0
+6	64.0
+7	80.0
+8	259.0
+9	258.0
+10	117.0
+
+plt.bar(df2_2022_month_dead.index, df2_2022_month_dead['서울시 당일사망자'])
+plt.show()
+
+# 서울시의 2022년 10월 사망자를 라인 차트로 표기
+
+df2_2022_10 = df2.loc['2022-10']
+
+df2_2022_10.columns 컬럼명 확인
+
+df2_2022_10_dead = df2_2022_10[['서울시 당일사망자']]
+
+plt.plot(df2_2022_10_dead)
+plt.show()
+
+#######################
+mpg분석 생성
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import scipy.stats as stats
+from pytimekr import pytimekr
+
+df = pd.read_csv('https://raw.githubusercontent.com/BitecodeHTML/https-github.com-mwaskom-seaborn-data/master/mpg.csv')  
+# 주소값은 교수님이 주심
+df.head()
+출력
+           mpg  cylinders	displacement	horsepower	weight	acceleration	model_year	origin	name
+0	18.0	8	307.0	130.0	3504	12.0	70	usa	chevrolet chevelle malibu
+1	15.0	8	350.0	165.0	3693	11.5	70	usa	buick skylark 320
+2	18.0	8	318.0	150.0	3436	11.0	70	usa	plymouth satellite
+3	16.0	8	304.0	150.0	3433	12.0	70	usa	amc rebel sst
+4	17.0	8	302.0	140.0	3449	10.5	70	usa	ford torino
+
+df.columns 컬럼명 확인
+
+# 배기량의 범위가 68 ~ 455까지임, 이것을 3개로 분류하겠습니다.
+# 저 중 고
+#df1['배기량']
+df1['배기량'] = pd.qcut(df1['displacement'], q=3, labels=['저', '중', '고'])
+df1.head(1)
+
+# 배기량에 따른 평균 mpg에 대한 막대 그래프를 그리시오
+df1_dis_mpg = df1.pivot_table(index='배기량', values=['mpg'], aggfunc=['mean'])['mean']
+# ['mean'] 한번더 써서 없앤다
+
+plt.rc('font', family='Malgun Gothic')
+
+plt.bar(df1_dis_mpg.index, df1_dis_mpg['mpg'])
+plt.show()
+
+df1.corr()
+출력
+저장파일 참조
+
+# 통계적 가설 검증
+# 귀무가설: mpg 와 displacement(배기량)는 상관 관계가 없다
+# 대립가설: mpg 와 displacement(배기량)는 상관 관계가 있다
+df1_crosstable = pd.crosstab(df1['mpg'], df1['displacement'])
+df1_crosstable
+
+stats.chi2_contingency(df1_crosstable)
+# pvalue 0.035047257451290816
+# 대립가설 채택
+
+############
+df1['weight'].min()
+출력
+1613
+
+df1['weight'].describe()
+출력
+count     398.000000
+mean     2970.424623
+std       846.841774
+min      1613.000000
+25%      2223.750000
+50%      2803.500000
+75%      3608.000000
+max      5140.000000
+Name: weight, dtype: float64
+
+# weight는 1613 ~ 5140까지 
+# 소 중 대
+# df1['무게'] =
+df1['무게'] = pd.qcut(df1['weight'], q=3, labels=['소', '중', '대'])
+df1.head(1)
+출력
+mpg	cylinders	displacement	horsepower	weight	acceleration	model_year	origin	name	배기량	무게
+0	18.0	8	307.0	130.0	3504	12.0	70	usa	chevrolet chevelle malibu	고	대
+
+# 무게 컬럼을 이용해서 무게별 평균 mpg에 대한 막대 그래프를 그리시오
+df1_wei_mpg = df1.pivot_table(index='무게', values=['mpg'], aggfunc=['mean'])['mean']
+df1_wei_mpg
+출력
+	mpg
+무게	
+소	31.119403
+중	23.589313
+대	15.778947
+
+plt.bar(df1_wei_mpg.index, df1_wei_mpg['mpg'])
+plt.show()
+
+# 통계적 가설 검정
+# 귀무가설: mpg와 weight는 상관관계가 없다 우연이다
+# 대립가설: mpg와 weight는 상관관계가 있다 우연이 아니다.
+
+df1_crosstab_weigt = pd.crosstab(df1['mpg'], df1['weight'])
+stats.chi2_contingency(df1_crosstab_weigt)
+# 0.9996308120502752
+# 0.05보다 크다
+# 귀무가설 채택
+출력
+(43796.69810734501,
+ 0.9996308120502752,
+ 44800,
+ array([[0.00251256, 0.00251256, 0.00251256, ..., 0.00251256, 0.00251256,
+         0.00251256],
+        [0.00502513, 0.00502513, 0.00502513, ..., 0.00502513, 0.00502513,
+         0.00502513],
+        [0.01005025, 0.01005025, 0.01005025, ..., 0.01005025, 0.01005025,
+         0.01005025],
+        ...,
+        [0.00251256, 0.00251256, 0.00251256, ..., 0.00251256, 0.00251256,
+         0.00251256],
+        [0.00251256, 0.00251256, 0.00251256, ..., 0.00251256, 0.00251256,
+         0.00251256],
+        [0.00251256, 0.00251256, 0.00251256, ..., 0.00251256, 0.00251256,
+         0.00251256]]))
+
+#######################
+df1['cylinders'].describe()
+출력
+count    398.000000
+mean       5.454774
+std        1.701004
+min        3.000000
+25%        4.000000
+50%        4.000000
+75%        8.000000
+max        8.000000
+Name: cylinders, dtype: float64
+
+# '소', '다'
+# df1['실린더'] =
+df1['실린더'] = pd.qcut(df1['cylinders'], q=2, labels=['소', '다'])
+df1.head(1)
+
+# 컬럼명이 실린더를 이용해서 실린더별 mpg 평균을 막대 그래프로 그리시오
+df1_cyl_mpg = df1.pivot_table(index='실린더', values=['mpg'], aggfunc=['mean'])['mean']
+
+plt.bar(df1_cyl_mpg.index, df1_cyl_mpg['mpg'])
+plt.show()
+
+# 검증
+# 귀무가설: mpg와 cylinders는 상관관계가 없다
+# 대립가설: mpg와 cylinders는 상관관계가 있다
+
+df1_crosstab_cyl = pd.crosstab(df1['mpg'], df1['cylinders'])
+
+stats.chi2_contingency(df1_crosstab_cyl)
+# 2.411032036470721e-37
+# 0.05보다 작다
+# 대립가설: mpg와 cylinders는 상관관계가 있다. 채택
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
