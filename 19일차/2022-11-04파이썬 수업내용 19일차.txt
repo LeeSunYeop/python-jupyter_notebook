@@ -1,0 +1,639 @@
+1. 데이터 구조 정상화
+
+2. 사용일자(int) -> 문자열로 변경 -> datetime으로 변경
+ 
+3. 사용일자에 대해서 시각이 0시0분0초로 설정되게 하세요 -> normalize 작업해 주세요
+
+4. 2번에서 3번 작업 복습
+  - 등록일자 컬럼을 datetime으로 변경, normalize 작업까지 해 주세요
+# 등록일자가 int64 되어 있어 object 바꾸고 datetime으로 최종 바꿔줘야한다
+# 그리고 dt.normalize() 0시0분으로 만들어 준다
+
+5. 계절성 분석을 위한 요일 컬럼 생성
+  - 사용일자를 알고 있으면, 그날의 요일을 알 수 있음
+  - dt.dayofweek 사용
+  - 그 요일 정보가 숫자로... 0:월, 1:화, 2:수, 3:목, 4:금, 5:토, 6:일
+  - pd.cut(df1['요일'], bins=[-1, 0, 1, 2, 3, 4, 5, 6], labels=["월", "화", "수", "목", "금", "토", "일"])
+
+
+#################
+df 구조가 이상했음
+
+1. 첫번째는 데이터를 이동시켜서 구조 조정했구요
+   shift() : 데이터를 이동시키는 함수
+# shift(): 
+# 오늘 상승이나 하락이 전날 가격보다 얼마나 상승/하락 했는지 
+# 주식 생각하면 됨
+# (현재데이터) (어제데이터)     (현재데이터)-(어제데이터)
+#     10                                NaN(어제 데이터가 없어서 값이 NaN으로 나옴)
+#     20           10                   10
+#     30           20                   10
+#     40           30                   10
+#                   40
+# 즉 주식에 지금현재 어제에 비해 얼마나 오르고 있는지 보고 싶을때 사용함
+
+2. 컬럼명 변경  rename(columns=) 이용
+
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+import seaborn as sns
+import scipy.stats as stats
+
+df = pd.read_csv('지하철승하차_역별_호선별.csv')
+df
+
+df1 = df.copy()
+
+방법1
+슬라이싱 사용하는 방법
+# 데이터값이 오른쪽으로 한칸씩 이동
+df1.iloc[:, 1:] = df1.iloc[:, 0:]
+df1
+
+df1['사용일자'] = df1.index
+df1
+
+df1.index
+# 날짜형태지만 int로 잡혀있음
+출력
+Int64Index([20220901, 20220901, 20220901, 20220901, 20220901, 20220901,
+            20220901, 20220901, 20220901, 20220901,
+            ...
+            20220930, 20220930, 20220930, 20220930, 20220930, 20220930,
+            20220930, 20220930, 20220930, 20220930],
+           dtype='int64', length=18182)
+
+df1.info()
+출력
+<class 'pandas.core.frame.DataFrame'>
+Int64Index: 18182 entries, 20220901 to 20220930
+Data columns (total 6 columns):
+ #   Column  Non-Null Count  Dtype 
+---  ------  --------------  ----- 
+ 0   사용일자    18182 non-null  int64 
+ 1   노선명     18182 non-null  object
+ 2   역명      18182 non-null  object
+ 3   승차총승객수  18182 non-null  int64 
+ 4   하차총승객수  18182 non-null  int64 
+ 5   등록일자    18182 non-null  int64 
+dtypes: int64(4), object(2)
+memory usage: 994.3+ KB
+
+###########################
+방법2
+shift()이용
+df2 = pd.read_csv('지하철승하차_역별_호선별.csv')
+df2.head(1)
+
+df2 = df2.shift(1, axis=1)
+df2 
+
+
+##########################
+방법3
+df3 = pd.read_csv('지하철승하차_역별_호선별.csv')
+df3.head(1)
+출력
+                     사용일자	노선명	역명 승차총승객수	하차총승객수	등록일자
+20220901	2호선	신대방	26990	26203	20220904	NaN
+한칸씩 밀려있음
+
+# 한칸씩 밀린 데이터를 rename 을 사용하여 바르게 고치기
+df3= df3.rename(columns={
+    '사용일자':'노선', 
+    '노선명':'역명',
+    '역명':'승차자수',
+    '승차총승객수':'하차자수',
+    '하차총승객수':'등록일'
+})
+
+df3
+
+df3['사용일자'] = df3.index
+df3
+
+####################
+# df1의 사용일자 컬럼의 자료형을 datetime으로 변경하세요
+df1['사용일자'] = pd.to_datetime(df1['사용일자'])
+df1
+결과를 보면 사용일자에
+# 1970-01-01 00:00:00.020220901 나옴
+# int로 되어 있어 object로 바꿔줘야한다
+# 바로 자료형을 pd.to_datetime 으로 바꾸면 안된다 
+# 자료형을 문자형으로 바꿔 준 다음 pd.to_datetime으로 바꿔 준다
+# 문자형으로 바꾸려면 함수를 이용하거나 람다식을 사용한다
+
+df1['사용일자'] = df1.index
+df1
+
+df1['사용일자'] = df1['사용일자'].apply(lambda x : str(x))
+df1.info()
+# 사용일자가 int에서 object 바뀜
+
+df1['사용일자'] = pd.to_datetime(df1['사용일자'])
+df1
+# 이렇게 해야 사용일자에 정상적으로 들어감
+
+df1['사용일자'] = df1['사용일자'].dt.normalize()
+df1
+
+###등록일자도 datetime로 만들어 주세요
+df1.info()
+# 등록일자가 int64 되어 있어 object 바꾸고 datetime으로 최종 바꿔줘야한다
+# 그리고 dt.normalize() 0시0분으로 만들어 준다
+
+df1['등록일자'] = df1['등록일자'].apply(lambda x : str(x))
+
+df1['등록일자'] = pd.to_datetime(df1['등록일자'])
+df1.info()
+
+df1['등록일자'] = df1['등록일자'].dt.normalize()
+df1.head(3)
+
+# 요일 컬럼 만들고 거기에 날짜에 맞게 요일을 넣어 주세요
+df1['요일'] = df1['사용일자'].dt.dayofweek
+df1
+
+df1['요일'] = pd.cut(df1['요일'], bins=[-1, 0, 1, 2, 3, 4, 5, 6], labels=["월", "화", "수", "목", "금", "토", "일"])
+df1
+
+################
+# x축의 값을 문자열에 넣지 말고, 숫자로 넣고
+# 나중에 문자열로 변경
+plt.rc('font', family='Malgun Gothic')
+
+w=0.5
+x = np.array([x for x in range(len(df_line_19.index))])
+plt.figure(figsize=(15, 5)) # 그래프의 크기 조정: x=15, y=5
+
+plt.bar(x-w/4, df_line_19['승차총승객수'], width=w/2)
+plt.bar(x+w/4, df_line_19['하차총승객수'], width=w/2)
+plt.xticks(x, df_line_19.index, rotation=90) # rotation=90 글자 방향 바꾸기
+
+plt.show()
+
+##########
+# 1호선의 요일별 승하차 평균 막대 그래프 그리기
+df1_line1_go = df1.pivot_table(index=['노선명', '요일'], values=['승차총승객수', '하차총승객수'], 
+                           aggfunc=['mean'])['mean'].loc['1호선']
+df1_line1_go
+# df1_line.loc['1호선', ['승차총승객수', '하차총승객수']]
+
+
+x = np.array(np.arange(0, len(df1_line1_go.index)))
+# 인덱스에 인덱스를 줘서 그래프를 따로 나뉘게 하기 위함이다
+
+w = 0.5
+
+plt.bar(x-w/4, df1_line1_go.loc[:, '승차총승객수'], width=w/2)
+plt.bar(x+w/4, df1_line1_go.loc[:, '하차총승객수'], width=w/2)
+plt.xticks(x, df1_line1_go.index)
+plt.show()
+
+#############
+x = np.array(np.arange(0, len(df1_line1_go.index)))
+
+w = 0.5
+
+plt.bar(x-w/4, df1_line1_go.loc[:, '승차총승객수'], width=w/2)
+plt.bar(x+w/4, df1_line1_go.loc[:, '하차총승객수'], width=w/2)
+plt.xticks([0, 3, 6], ['월', '목', '일']) 
+# x축 목록수를 줄이고 싶을때
+# [0, 3, 6] 간격이 일정하게 들어가야한다
+
+plt.show()
+
+################
+df1_lines_go = df1.pivot_table(index=['노선명', '요일'], values=['승차총승객수', '하차총승객수'],
+               aggfunc=['mean'])['mean']
+df1_lines_go
+
+##############
+df1_line2_go = df1_lines_go.loc['2호선']
+
+x = np.array(np.arange(0, len(df1_line2_go.index)))
+
+w = 0.5
+
+plt.bar(x-w/3, df1_line2_go.loc[:, '승차총승객수'], width=w/2)
+plt.bar(x, df1_line2_go.loc[:, '하차총승객수'], width=w/2)
+
+# plt.xticks(x, df1_line2_go.index)
+plt.xticks([0, 2, 4, 6], ['월', '수', '금', '일'])
+plt.show()
+
+###############
+# 4개의 그래프를 한 화면에 각각 나눠서 그리기
+df1_line1_go = df1_lines_go.loc['1호선']
+df1_line2_go = df1_lines_go.loc['2호선']
+df1_line3_go = df1_lines_go.loc['3호선']
+df1_line4_go = df1_lines_go.loc['4호선']
+
+fig, ax = plt.subplots(2, 2, sharey=True)
+# sharey=True y축을 공유한다는 뜻
+
+
+ax[0][0].bar(x-w/4, df1_line1_go.loc[:, '승차총승객수'], width=w/2)
+ax[0][0].bar(x+w/4, df1_line1_go.loc[:, '하차총승객수'], width=w/2)
+
+ax[0][1].bar(x-w/4, df1_line2_go.loc[:, '승차총승객수'], width=w/2)
+ax[0][1].bar(x+w/4, df1_line2_go.loc[:, '하차총승객수'], width=w/2)
+
+ax[1][0].bar(x-w/4, df1_line3_go.loc[:, '승차총승객수'], width=w/2)
+ax[1][0].bar(x+w/4, df1_line3_go.loc[:, '하차총승객수'], width=w/2)
+
+ax[1][1].bar(x-w/4, df1_line4_go.loc[:, '승차총승객수'], width=w/2)
+ax[1][1].bar(x+w/4, df1_line4_go.loc[:, '하차총승객수'], width=w/2)
+
+ax[0][0].set_xticks(x, df1_line1_go.index)
+ax[0][1].set_xticks(x, df1_line2_go.index)
+ax[1][0].set_xticks(x, df1_line3_go.index)
+ax[1][1].set_xticks(x, df1_line4_go.index)
+
+plt.show()
+
+######################
+# 날짜별 지하철 승차총승객수 평균 line 그래프
+df1_day_g = df1.pivot_table(index="사용일자", values='승차총승객수', aggfunc=['mean'])['mean']
+
+plt.figure(figsize=(10, 5))
+plt.plot(df1_day_g.index, df1_day_g)
+
+# 또는 plt.xticks(rotation=90)
+plt.show()
+
+또는 
+df1_day_g2 = df1.pivot_table(index=df1['사용일자'].dt.day, values='승차총승객수', aggfunc='mean')
+# index=df1['사용일자'].dt.day
+# 인덱스를 날짜전체를 나타내지 않고 일별로 나타낸다
+
+plt.figure(figsize=(10, 5))
+
+plt.xticks(df1_day_g2.index)
+
+plt.plot(df1_day_g2)
+plt.show()
+
+##################
+# 역별: 강남, 노원, 천호의 승하차총승객수의 평균을 구해서 수평막대그래프를 그리시오
+df1_station_go = df1.pivot_table(index='역명', values=['승차총승객수', '하차총승객수'], 
+                              aggfunc=['mean'])['mean']
+
+# 천호라는 역명 찾을 때
+# df1[df1['역명'].str.contains('천호')] 
+# 사용하면 천호라는 이름을 가진 목록이 쭉 나온다
+y1 = df1_station_go.loc[['강남', '노원', '천호(풍납토성)']]['승차총승객수']
+y2 = df1_station_go.loc[['강남', '노원', '천호(풍납토성)']]['하차총승객수']
+
+x = np.array([x for x in range(len(y1.index))])
+
+w = 0.5
+
+plt.bar(x-w/4, y1, width=w/2)
+plt.bar(x+w/4, y2, width=w/2)
+plt.xticks(x, y1.index)
+plt.show()
+
+# 수직막대 -> 수평 막대
+# bar() -> barh()
+# width -> height
+# xticks -> yticks
+
+# 수평막대 그래프
+h = 0.5
+
+plt.barh(x-h/4, y1, height=h/2)
+plt.barh(x+h/4, y2, height=h/2)
+plt.yticks(x, y1.index)
+plt.show()
+
+# 천호라는 역명 찾을 때
+df1[df1['역명'].str.contains('천호')].head(3)
+출력
+	           사용일자	          노선명	역명	      승차총승객수	하차총승객수등록일자	요일
+20220901	2022-09-01	8호선	천호(풍납토성)	15340	17487	2022-09-04	목
+20220901	2022-09-01	5호선	천호(풍납토성)	18813	19122	2022-09-04	목
+20220902	2022-09-02	8호선	천호(풍납토성)	15921	19207	2022-09-05	금
+
+또는 여러개의 역명을 찾을때
+df1[df1['역명'].str.contains('천호|강남|노원')].head(10)
+출력
+                       사용일자	           노선명	역명	          승차총승객수   하차총승객수   등록일자	요일
+20220901	2022-09-01	2호선	강남	          84920	        82240	   2022-09-04	목
+20220901	2022-09-01	분당선	강남구청	          10605	        12213	   2022-09-04	목
+20220901	2022-09-01	8호선	천호(풍납토성)    15340	        17487	   2022-09-04	목
+20220901	2022-09-01	7호선	강남구청	          18583	        20654           2022-09-04	목
+20220901	2022-09-01	7호선	노원	          20600	        21820	   2022-09-04	목
+20220901	2022-09-01	5호선	천호(풍납토성)    18813	        19122	   2022-09-04	목
+20220901	2022-09-01	4호선	노원	          19780	        22642	   2022-09-04	목
+20220902	2022-09-02	분당선	강남구청           10713	        12386	   2022-09-05	금
+20220902	2022-09-02	8호선	천호(풍납토성)     15921	        19207	   2022-09-05	금
+20220902	2022-09-02	7호선	강남구청	           18714	        20812	   2022-09-05	금
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
